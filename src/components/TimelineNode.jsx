@@ -1,4 +1,4 @@
-import { Component, Suspense, useRef, useState, useEffect, useMemo } from "react";
+import { Component, Suspense, useRef, useState, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Html, Billboard, Image as DreiImage, Text } from "@react-three/drei";
 import InfoCard from "./InfoCard.jsx";
@@ -239,21 +239,9 @@ function BoardTimelineNode({ evento, color, accent, isActive, onSelect, onClose 
     };
   }, [evento.imagen, evento.icono]);
 
-  const cardType = useMemo(() => {
-    const title = evento.titulo.toLowerCase();
-    if (
-      title.includes("inicio") ||
-      title.includes("revisión") ||
-      title.includes("planificación") ||
-      title.includes("dictamen") ||
-      title.includes("informe") ||
-      title.includes("respuesta")
-    ) {
-      return "document";
-    }
-    const num = parseInt(evento.id.replace(/^\D+/g, ""), 10) || 0;
-    return num % 2 === 0 ? "note" : "polaroid";
-  }, [evento]);
+  // El tipo de tarjeta ya viene calculado por computeBoardLayout
+  // (InvestigationBoard.jsx) — única fuente de verdad, sin duplicar lógica.
+  const cardType = evento.cardType ?? "polaroid";
 
   useFrame((state, delta) => {
     if (groupRef.current) {

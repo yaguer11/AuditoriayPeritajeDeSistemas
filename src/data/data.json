@@ -19,7 +19,7 @@
           "descripcion": "El equipo pericial arriba al domicilio allanado. El equipo EV-001 (Workstation Dell) se encontró encendido ejecutando procesos de streaming HLS en vivo. Se documenta el estado de la escena, se fotografía cada dispositivo in situ y se asegura el perímetro para evitar la manipulación remota o el apagado intencional de los equipos.",
           "hallazgo": "EV-001 encendida transmitiendo señal HLS — evidencia volátil en riesgo",
           "criticidad": "ALTA",
-          "imagen": "/assets/escena-allanamiento.jpg"
+          "imagen": "/assets/escena-allanamiento.png"
         },
         {
           "id": "per-02",
@@ -33,7 +33,7 @@
           "descripcion": "Con el equipo aún encendido se ejecuta el volcado completo de la memoria RAM (16 GB) utilizando Winpmem desde una unidad USB estéril, respetando el orden de volatilidad de ISO/IEC 27037. Este paso captura procesos activos, conexiones de red y datos en portapapeles que se perderían con el apagado.",
           "hallazgo": "Imagen de RAM de 16 GB adquirida sin alterar el sistema",
           "criticidad": "CRÍTICA",
-          "imagen": "/assets/ram-dump.jpg"
+          "imagen": "/assets/ram-dump.png"
         },
         {
           "id": "per-03",
@@ -47,7 +47,7 @@
           "descripcion": "Se captura el tráfico de red en tránsito mediante un TAP pasivo interpuesto en el enlace, sin inyectar paquetes ni alterar la comunicación. Acto seguido se procede al secuestro del router MikroTik (EV-005), preservando su configuración, tablas NAT y logs de conexión.",
           "hallazgo": "Tráfico HLS saliente capturado + router EV-005 secuestrado",
           "criticidad": "ALTA",
-          "imagen": "/assets/tap-red.jpg"
+          "imagen": "/assets/tap-red.png"
         },
         {
           "id": "per-04",
@@ -61,7 +61,7 @@
           "descripcion": "Finalizado el triage se realiza el apagado técnico (soft shutdown) de la Workstation EV-001. El equipo se embala en bolsas antiestáticas, se sella con cinta tamper-evident y se precinta con numeración única, dando inicio formal al registro de cadena de custodia.",
           "hallazgo": "EV-001 preservada e ingresada a cadena de custodia",
           "criticidad": "MEDIA",
-          "imagen": "/assets/precintado.jpg"
+          "imagen": "/assets/precintado.png"
         },
         {
           "id": "per-05",
@@ -75,7 +75,7 @@
           "descripcion": "Se extrae físicamente el disco NVMe (EV-002) de la workstation utilizando guantes antiestáticos para evitar contaminación por descarga electrostática o pérdida de integridad del medio. El disco se rotula y fotografía antes de su adquisición.",
           "hallazgo": "Disco NVMe EV-002 extraído sin daños",
           "criticidad": "ALTA",
-          "imagen": "/assets/extraccion-nvme.jpg"
+          "imagen": "/assets/extraccion-nvme.png"
         },
         {
           "id": "per-06",
@@ -89,7 +89,7 @@
           "descripcion": "Se genera la imagen forense bit a bit del disco EV-002 en formato .E01 (Expert Witness Format) utilizando FTK Imager, con el disco conectado a través del bloqueador de escritura por hardware Tableau T35689iu, garantizando que ningún byte del original pueda ser modificado durante la adquisición.",
           "hallazgo": "Imagen .E01 completa — original intacto gracias al write-blocker",
           "criticidad": "CRÍTICA",
-          "imagen": "/assets/ftk-imager.jpg"
+          "imagen": "/assets/ftk-imager.png"
         },
         {
           "id": "per-07",
@@ -103,7 +103,7 @@
           "descripcion": "Se calculan y verifican los hashes criptográficos SHA-256 de la evidencia digital: el hash del original coincide con el de la imagen .E01, garantizando el principio de inalterabilidad. Los valores quedan asentados en el acta y en el registro de cadena de custodia.",
           "hallazgo": "Hash original = hash copia → integridad demostrada",
           "criticidad": "CRÍTICA",
-          "imagen": "/assets/hash-sha256.jpg"
+          "imagen": "/assets/hash-sha256.png"
         },
         {
           "id": "per-08",
@@ -117,7 +117,7 @@
           "descripcion": "En laboratorio se analiza el volcado de RAM con Volatility 3. Se detecta una técnica de Process Hollowing sobre svchost.exe (PID 1337), utilizada para ocultar el proceso de captura y retransmisión. Además se extrae del portapapeles la seed phrase de una billetera de criptomonedas.",
           "hallazgo": "Process Hollowing en svchost.exe (PID 1337) + seed phrase recuperada",
           "criticidad": "CRÍTICA",
-          "imagen": "/assets/volatility-ram.jpg"
+          "imagen": "/assets/volatility-ram.png"
         },
         {
           "id": "per-09",
@@ -131,7 +131,7 @@
           "descripcion": "Se indexa la imagen forense .E01 con Autopsy y Magnet AXIOM. Se extrae el historial de navegación de Firefox (accesos al panel de administración del sitio) y las bases de datos SQLite de Telegram con conversaciones sobre la venta de accesos y cobros.",
           "hallazgo": "Historial de Firefox + chats de Telegram vinculan al imputado con la operación",
           "criticidad": "ALTA",
-          "imagen": "/assets/autopsy-axiom.jpg"
+          "imagen": "/assets/autopsy-axiom.png"
         },
         {
           "id": "per-10",
@@ -145,7 +145,7 @@
           "descripcion": "Se ejecuta RegRipper sobre el hive SYSTEM de la imagen forense. La subclave USBSTOR revela la conexión histórica de 3 dispositivos USB cuyos números de serie no corresponden a ningún dispositivo hallado en la escena, sugiriendo evidencia sustraída o resguardada en otro lugar.",
           "hallazgo": "3 dispositivos USB conectados históricamente, ausentes en la escena",
           "criticidad": "ALTA",
-          "imagen": "/assets/regripper-usbstor.jpg"
+          "imagen": "/assets/regripper-usbstor.webp"
         },
         {
           "id": "per-11",
@@ -159,7 +159,7 @@
           "descripcion": "Se ejecuta PhotoRec sobre el espacio no asignado del disco, recuperando exitosamente el archivo wallet.dat (billetera Bitcoin eliminada) y fragmentos .ts de video con marcas de agua de ESPN y Turner, que habían sido borrados para eliminar rastros de la retransmisión.",
           "hallazgo": "wallet.dat + fragmentos .ts de ESPN/Turner recuperados del espacio no asignado",
           "criticidad": "CRÍTICA",
-          "imagen": "/assets/photorec-carving.jpg"
+          "imagen": "/assets/photorec-carving.png"
         },
         {
           "id": "per-12",
@@ -173,7 +173,7 @@
           "descripcion": "Con ExifTool se extraen fechas de creación ocultas en capturas de pantalla de OBS Studio, que ubican temporalmente la actividad de streaming. El análisis on-chain traza USD 87.400 distribuidos en 156 transacciones de la red Bitcoin vinculadas a la wallet recuperada.",
           "hallazgo": "USD 87.400 en 156 transacciones BTC trazadas a la wallet del imputado",
           "criticidad": "CRÍTICA",
-          "imagen": "/assets/blockchain-trace.jpg"
+          "imagen": "/assets/blockchain-trace.png"
         },
         {
           "id": "per-13",

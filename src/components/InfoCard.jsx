@@ -14,14 +14,14 @@ const CRITICIDAD_COLORS = {
  * anclada al nodo activo en el espacio 3D. Muestra el detalle completo
  * del hito: fecha, hora, responsable, herramientas, hallazgo e imagen.
  */
-export default function InfoCard({ evento, color, onClose }) {
+export default function InfoCard({ evento, color, onClose, position = [0, 1.4, 0] }) {
   const badge = CRITICIDAD_COLORS[evento.criticidad] ?? "#54a0ff";
 
   return (
     <Html
-      position={[0, 1.4, 0]}
+      position={position}
       center
-      distanceFactor={9}
+      distanceFactor={6.8}
       zIndexRange={[100, 0]}
       style={{ pointerEvents: "auto" }}
     >
@@ -73,8 +73,22 @@ export default function InfoCard({ evento, color, onClose }) {
               ))}
             </div>
           </div>
+
+          {evento.link && (
+            <div className="info-card__link">
+              <a
+                href={evento.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="info-card__link-btn"
+              >
+                🔗 Ver en Confluence Wiki
+              </a>
+            </div>
+          )}
         </div>
       </div>
     </Html>
   );
 }
+

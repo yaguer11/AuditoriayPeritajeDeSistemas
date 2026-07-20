@@ -249,7 +249,7 @@
           "descripcion": "Toda la evidencia física y digital se almacena de forma segura en el depósito de la UFECI (Unidad Fiscal Especializada en Ciberdelincuencia), cerrando el ciclo de cadena de custodia y quedando a disposición del tribunal para eventuales contrapericias.",
           "hallazgo": "Evidencia resguardada — cadena de custodia cerrada sin observaciones",
           "criticidad": "MEDIA",
-          "imagen": "/assets/deposito-ufeci.jpg"
+          "imagen": "/assets/deposito-ufeci.png"
         }
       ]
     },

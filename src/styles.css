@@ -606,7 +606,7 @@ body,
 /* Botón Volver de la escena de investigación */
 .timeline-scene__back-btn {
   position: absolute;
-  top: 100px;
+  top: 140px;
   left: 28px;
   z-index: 100;
   display: flex;

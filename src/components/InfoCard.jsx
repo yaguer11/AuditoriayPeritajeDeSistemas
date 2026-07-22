@@ -18,6 +18,7 @@ export default function InfoCard({
   evento,
   color,
   onClose,
+  onEnterRoom,
   position = [0, 1.4, 0],
 }) {
   const badge = CRITICIDAD_COLORS[evento.criticidad] ?? "#54a0ff";
@@ -106,6 +107,21 @@ export default function InfoCard({
               ))}
             </div>
           </div>
+
+          {evento.isRoomLauncher && onEnterRoom && (
+            <div className="info-card__link">
+              <button
+                type="button"
+                className="info-card__link-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEnterRoom();
+                }}
+              >
+                🔍 Ingresar al Cuarto de Investigación 3D
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </Html>

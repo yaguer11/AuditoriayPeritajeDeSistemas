@@ -100,6 +100,7 @@ function ClassicTimelineNode({
   isActive,
   onSelect,
   onClose,
+  onEnterRoom,
 }) {
   const meshRef = useRef();
   const ringRef = useRef();
@@ -203,6 +204,7 @@ function ClassicTimelineNode({
           evento={evento}
           color={accent}
           onClose={onClose}
+          onEnterRoom={onEnterRoom}
           position={[0, 1.4, 0]}
         />
       )}
@@ -604,6 +606,7 @@ export default function TimelineNode({
   isActive,
   onSelect,
   onClose,
+  onEnterRoom,
   isBoardView,
 }) {
   if (isBoardView) {
@@ -615,6 +618,7 @@ export default function TimelineNode({
         isActive={isActive}
         onSelect={onSelect}
         onClose={onClose}
+        onEnterRoom={onEnterRoom}
       />
     );
   }
@@ -626,6 +630,7 @@ export default function TimelineNode({
       isActive={isActive}
       onSelect={onSelect}
       onClose={onClose}
+      onEnterRoom={onEnterRoom}
     />
   );
 }

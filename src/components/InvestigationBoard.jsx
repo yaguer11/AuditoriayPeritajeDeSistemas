@@ -1,6 +1,6 @@
 import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Line, Text } from "@react-three/drei";
+import { Line, Text, useTexture } from "@react-three/drei";
 import * as THREE from "three";
 
 /* ════════════════════════════════════════════════════════════════════════
@@ -24,11 +24,17 @@ const COL_WIDTH = 2.55;
 const ROW_HEIGHT = 1.95;
 
 export const getCardType = (evento) => {
+  if (evento.id && evento.id.startsWith("h-")) return "polaroid"; // Todas las evidencias forenses tienen foto Polaroid
   const t = evento.titulo.toLowerCase();
   if (
-    t.includes("inicio") || t.includes("revisión") || t.includes("planificación") ||
-    t.includes("dictamen") || t.includes("informe") || t.includes("respuesta")
-  ) return "document";
+    t.includes("inicio") ||
+    t.includes("revisión") ||
+    t.includes("planificación") ||
+    t.includes("dictamen") ||
+    t.includes("informe") ||
+    t.includes("respuesta")
+  )
+    return "document";
   const n = parseInt(evento.id.replace(/^\D+/g, ""), 10) || 0;
   return n % 2 === 0 ? "note" : "polaroid";
 };
@@ -46,7 +52,8 @@ export function computeBoardLayout(eventos) {
     const row = Math.floor(i / columns);
     const col = i % columns;
     const targetCol = row % 2 !== 0 ? columns - 1 - col : col; // serpentina
-    const x = (targetCol - (columns - 1) / 2) * COL_WIDTH + Math.sin(i * 12.3) * 0.18;
+    const x =
+      (targetCol - (columns - 1) / 2) * COL_WIDTH + Math.sin(i * 12.3) * 0.18;
     const y = ((rows - 1) / 2 - row) * ROW_HEIGHT + Math.cos(i * 7.7) * 0.14;
     const z = 0.02 + 0.01 * (i % 3);
     const cardType = getCardType(ev);
@@ -54,7 +61,9 @@ export function computeBoardLayout(eventos) {
       ...ev,
       boardPosition: new THREE.Vector3(x, y, z),
       boardRotationZ: Math.sin(i * 8.9) * 0.08,
-      col, row, columns,
+      col,
+      row,
+      columns,
       cardType,
       localPinY: getLocalPinY(cardType),
     };
@@ -82,8 +91,13 @@ export function computeRoomDims(boardW, boardH) {
 
 export function getPinPos(ev) {
   const { x, y, z } = ev.boardPosition;
-  const rot = ev.boardRotationZ, py = ev.localPinY;
-  return new THREE.Vector3(x - py * Math.sin(rot), y + py * Math.cos(rot), z + 0.015);
+  const rot = ev.boardRotationZ,
+    py = ev.localPinY;
+  return new THREE.Vector3(
+    x - py * Math.sin(rot),
+    y + py * Math.cos(rot),
+    z + 0.015,
+  );
 }
 
 /* ─── Texturas procedurales ─────────────────────────────────────────────── */
@@ -91,16 +105,31 @@ function buildCorkTexture() {
   const c = document.createElement("canvas");
   c.width = c.height = 512;
   const ctx = c.getContext("2d");
-  ctx.fillStyle = "#dcb18a"; ctx.fillRect(0, 0, 512, 512);
+  ctx.fillStyle = "#dcb18a";
+  ctx.fillRect(0, 0, 512, 512);
   for (let i = 0; i < 45000; i++) {
-    const x = Math.random() * 512, y = Math.random() * 512;
-    const s = Math.random() * 1.5 + 0.5, r = Math.random();
-    ctx.fillStyle = r < 0.35 ? "#b4855e" : r < 0.65 ? "#e9c6a6" : r < 0.8 ? "#9c6d48" : "rgba(255,255,255,0.12)";
+    const x = Math.random() * 512,
+      y = Math.random() * 512;
+    const s = Math.random() * 1.5 + 0.5,
+      r = Math.random();
+    ctx.fillStyle =
+      r < 0.35
+        ? "#b4855e"
+        : r < 0.65
+          ? "#e9c6a6"
+          : r < 0.8
+            ? "#9c6d48"
+            : "rgba(255,255,255,0.12)";
     ctx.fillRect(x, y, s, s);
   }
   for (let i = 0; i < 180; i++) {
     ctx.fillStyle = Math.random() > 0.5 ? "#c2936a" : "#aa7a54";
-    ctx.fillRect(Math.random() * 512, Math.random() * 512, Math.random() * 8 + 3, Math.random() * 5 + 2);
+    ctx.fillRect(
+      Math.random() * 512,
+      Math.random() * 512,
+      Math.random() * 8 + 3,
+      Math.random() * 5 + 2,
+    );
   }
   const tex = new THREE.CanvasTexture(c);
   tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
@@ -112,10 +141,14 @@ function buildParquetTexture() {
   const c = document.createElement("canvas");
   c.width = c.height = 512;
   const ctx = c.getContext("2d");
-  const PLANK_W = 64, PLANK_H = 16;
+  const PLANK_W = 64,
+    PLANK_H = 16;
   const cols = Math.ceil(512 / PLANK_W) + 1;
   const rowsN = Math.ceil(512 / PLANK_H) + 1;
-  const palettes = [["#3b2712", "#4a3118", "#5a3e22"], ["#2e1d0e", "#3d2a14", "#4b3419"]];
+  const palettes = [
+    ["#3b2712", "#4a3118", "#5a3e22"],
+    ["#2e1d0e", "#3d2a14", "#4b3419"],
+  ];
   for (let row = 0; row < rowsN; row++) {
     const pal = palettes[row % palettes.length];
     const offset = row % 2 === 0 ? 0 : PLANK_W / 2;
@@ -144,11 +177,17 @@ function buildWallTexture() {
   const c = document.createElement("canvas");
   c.width = c.height = 256;
   const ctx = c.getContext("2d");
-  ctx.fillStyle = "#ccc1b0"; ctx.fillRect(0, 0, 256, 256);
+  ctx.fillStyle = "#ccc1b0";
+  ctx.fillRect(0, 0, 256, 256);
   for (let i = 0; i < 4000; i++) {
     const alpha = (Math.random() * 0.04).toFixed(3);
     ctx.fillStyle = `rgba(${Math.random() > 0.5 ? "200,180,140" : "120,100,80"},${alpha})`;
-    ctx.fillRect(Math.random() * 256, Math.random() * 256, Math.random() * 12 + 2, Math.random() * 3 + 1);
+    ctx.fillRect(
+      Math.random() * 256,
+      Math.random() * 256,
+      Math.random() * 12 + 2,
+      Math.random() * 3 + 1,
+    );
   }
   const tex = new THREE.CanvasTexture(c);
   tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
@@ -167,6 +206,42 @@ function WallPicture({ position, rotation = [0, 0, 0], w = 1.2, h = 0.9 }) {
       <mesh position={[0, 0, 0.022]}>
         <planeGeometry args={[w, h]} />
         <meshStandardMaterial color="#8a9a7a" roughness={0.9} />
+      </mesh>
+    </group>
+  );
+}
+
+/* Logo institucional UNVIME enmarcado */
+function InstitutionalLogo({
+  position,
+  rotation = [0, 0, 0],
+  w = 1.0,
+  h = 1.0,
+}) {
+  // Use absolute public path so Vite serves the file from /public
+  // Use absolute public path so Vite serves the file from /public
+  // Prefer the optimized WebP in `public` for smaller size and transparency
+  const logoTex = useTexture("/unvime.webp");
+  return (
+    <group position={position} rotation={rotation}>
+      {/* Marco metálico negro elegante */}
+      <mesh castShadow>
+        <boxGeometry args={[w + 0.08, h + 0.08, 0.04]} />
+        <meshStandardMaterial color="#f3f3f3" roughness={0.5} metalness={0.8} />
+      </mesh>
+      {/* Paspartú oscuro para mejorar contraste del logo */}
+      <mesh position={[0, 0, 0.021]} castShadow receiveShadow>
+        <planeGeometry args={[w, h]} />
+        <meshStandardMaterial
+          color="#d4d4d4"
+          roughness={0.95}
+          metalness={0.05}
+        />
+      </mesh>
+      {/* El logo de UNVIME */}
+      <mesh position={[0, 0, 0.023]}>
+        <planeGeometry args={[w * 0.82, h * 0.82]} />
+        <meshStandardMaterial map={logoTex} transparent roughness={0.6} />
       </mesh>
     </group>
   );
@@ -217,7 +292,12 @@ function WindowBlinds({ position, rotation = [0, 0, 0], w = 2.4, h = 1.7 }) {
       {/* Noche detrás */}
       <mesh position={[0, 0, 0.032]}>
         <planeGeometry args={[w, h]} />
-        <meshStandardMaterial color="#0a1526" roughness={1} emissive="#16263f" emissiveIntensity={0.5} />
+        <meshStandardMaterial
+          color="#0a1526"
+          roughness={1}
+          emissive="#16263f"
+          emissiveIntensity={0.5}
+        />
       </mesh>
       {/* Persianas */}
       {Array.from({ length: slats }).map((_, i) => (
@@ -256,7 +336,12 @@ function OfficeDoor({ position, rotation = [0, 0, 0], h = 3.0, w = 1.3 }) {
       {/* Vidrio esmerilado superior */}
       <mesh position={[0, h / 4, 0.06]}>
         <planeGeometry args={[w - 0.24, h / 2 - 0.3]} />
-        <meshPhysicalMaterial color="#dfe8ec" roughness={0.9} transparent opacity={0.55} />
+        <meshPhysicalMaterial
+          color="#dfe8ec"
+          roughness={0.9}
+          transparent
+          opacity={0.55}
+        />
       </mesh>
       <Text
         font={HANDWRITTEN_FONT}
@@ -269,9 +354,16 @@ function OfficeDoor({ position, rotation = [0, 0, 0], h = 3.0, w = 1.3 }) {
         UFECI · INVESTIGACIONES
       </Text>
       {/* Picaporte */}
-      <mesh position={[w / 2 - 0.14, -0.1, 0.09]} rotation={[0, 0, Math.PI / 2]}>
+      <mesh
+        position={[w / 2 - 0.14, -0.1, 0.09]}
+        rotation={[0, 0, Math.PI / 2]}
+      >
         <cylinderGeometry args={[0.025, 0.025, 0.14, 10]} />
-        <meshStandardMaterial color="#b0a173" metalness={0.85} roughness={0.2} />
+        <meshStandardMaterial
+          color="#b0a173"
+          metalness={0.85}
+          roughness={0.2}
+        />
       </mesh>
     </group>
   );
@@ -287,7 +379,12 @@ function CeilingFixture({ position, w = 2.4 }) {
       </mesh>
       <mesh position={[0, -0.04, 0]}>
         <boxGeometry args={[w - 0.16, 0.02, 0.34]} />
-        <meshStandardMaterial color="#fffbee" emissive="#fff3d6" emissiveIntensity={2.4} toneMapped={false} />
+        <meshStandardMaterial
+          color="#fffbee"
+          emissive="#fff3d6"
+          emissiveIntensity={2.4}
+          toneMapped={false}
+        />
       </mesh>
     </group>
   );
@@ -331,9 +428,18 @@ function TrashBin({ position }) {
     <group position={position}>
       <mesh castShadow receiveShadow position={[0, 0.22, 0]}>
         <cylinderGeometry args={[0.2, 0.16, 0.44, 16, 1, true]} />
-        <meshStandardMaterial color="#4e5a60" roughness={0.5} metalness={0.4} side={THREE.DoubleSide} />
+        <meshStandardMaterial
+          color="#4e5a60"
+          roughness={0.5}
+          metalness={0.4}
+          side={THREE.DoubleSide}
+        />
       </mesh>
-      {[[0.05, 0.42, 0.02], [-0.06, 0.4, -0.04], [0.3, 0.05, 0.12]].map(([x, y, z], i) => (
+      {[
+        [0.05, 0.42, 0.02],
+        [-0.06, 0.4, -0.04],
+        [0.3, 0.05, 0.12],
+      ].map(([x, y, z], i) => (
         <mesh key={i} position={[x, y, z]} castShadow>
           <icosahedronGeometry args={[0.07, 0]} />
           <meshStandardMaterial color="#f0ede4" roughness={0.95} flatShading />
@@ -348,10 +454,22 @@ function FolderStack({ position, rotation = [0, 0, 0] }) {
   return (
     <group position={position} rotation={rotation}>
       {[0, 1, 2].map((i) => (
-        <mesh key={i} position={[Math.sin(i * 4) * 0.03, 0.018 + i * 0.035, Math.cos(i * 3) * 0.02]}
-          rotation={[0, Math.sin(i * 7) * 0.15, 0]} castShadow receiveShadow>
+        <mesh
+          key={i}
+          position={[
+            Math.sin(i * 4) * 0.03,
+            0.018 + i * 0.035,
+            Math.cos(i * 3) * 0.02,
+          ]}
+          rotation={[0, Math.sin(i * 7) * 0.15, 0]}
+          castShadow
+          receiveShadow
+        >
           <boxGeometry args={[0.62, 0.03, 0.45]} />
-          <meshStandardMaterial color={i === 1 ? "#c9a35e" : "#d7b56d"} roughness={0.85} />
+          <meshStandardMaterial
+            color={i === 1 ? "#c9a35e" : "#d7b56d"}
+            roughness={0.85}
+          />
         </mesh>
       ))}
       <mesh position={[0.1, 0.11, 0]} rotation={[0, -0.1, 0]}>
@@ -370,7 +488,11 @@ function Rug({ position, w, d }) {
         <planeGeometry args={[w, d]} />
         <meshStandardMaterial color="#5a2222" roughness={0.98} />
       </mesh>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.002, 0]} receiveShadow>
+      <mesh
+        rotation={[-Math.PI / 2, 0, 0]}
+        position={[0, 0.002, 0]}
+        receiveShadow
+      >
         <planeGeometry args={[w - 0.5, d - 0.5]} />
         <meshStandardMaterial color="#6e2c2c" roughness={0.98} />
       </mesh>
@@ -384,17 +506,29 @@ function FilingCabinet({ position }) {
     <group position={position}>
       <mesh castShadow receiveShadow>
         <boxGeometry args={[0.55, 1.4, 0.5]} />
-        <meshStandardMaterial color="#607d8b" roughness={0.55} metalness={0.35} />
+        <meshStandardMaterial
+          color="#607d8b"
+          roughness={0.55}
+          metalness={0.35}
+        />
       </mesh>
       {[-0.42, 0, 0.42].map((dy, i) => (
         <group key={i} position={[0, dy * (1.4 / 3) * 0.85, 0.26]}>
           <mesh castShadow>
             <boxGeometry args={[0.5, 0.38, 0.02]} />
-            <meshStandardMaterial color="#546e7a" roughness={0.5} metalness={0.3} />
+            <meshStandardMaterial
+              color="#546e7a"
+              roughness={0.5}
+              metalness={0.3}
+            />
           </mesh>
           <mesh position={[0, 0, 0.018]}>
             <boxGeometry args={[0.16, 0.022, 0.022]} />
-            <meshStandardMaterial color="#b0bec5" metalness={0.9} roughness={0.1} />
+            <meshStandardMaterial
+              color="#b0bec5"
+              metalness={0.9}
+              roughness={0.1}
+            />
           </mesh>
         </group>
       ))}
@@ -427,19 +561,40 @@ function FloorLamp({ position, rotationY = 0 }) {
       <group position={[0, 1.98, 0]} rotation={[0.45, 0, 0]}>
         <mesh castShadow>
           <coneGeometry args={[0.27, 0.32, 18, 1, true]} />
-          <meshStandardMaterial color="#c8860a" roughness={0.4} side={THREE.DoubleSide} />
+          <meshStandardMaterial
+            color="#c8860a"
+            roughness={0.4}
+            side={THREE.DoubleSide}
+          />
         </mesh>
         {/* Bombilla */}
         <mesh position={[0, -0.06, 0]}>
           <sphereGeometry args={[0.06, 10, 10]} />
-          <meshStandardMaterial color="#fffde7" emissive="#fff9c4" emissiveIntensity={4} toneMapped={false} />
+          <meshStandardMaterial
+            color="#fffde7"
+            emissive="#fff9c4"
+            emissiveIntensity={4}
+            toneMapped={false}
+          />
         </mesh>
         {/* Luz real de la lámpara */}
-        <pointLight position={[0, -0.18, 0]} intensity={2.0} color="#ffd54f" distance={8} decay={2} />
+        <pointLight
+          position={[0, -0.18, 0]}
+          intensity={2.0}
+          color="#ffd54f"
+          distance={8}
+          decay={2}
+        />
         {/* Haz de luz alineado con el cabezal */}
         <mesh ref={beamRef} position={[0, -1.15, 0]}>
           <coneGeometry args={[0.75, 2.1, 16, 1, true]} />
-          <meshBasicMaterial color="#fff8dc" transparent opacity={0.05} side={THREE.BackSide} depthWrite={false} />
+          <meshBasicMaterial
+            color="#fff8dc"
+            transparent
+            opacity={0.05}
+            side={THREE.BackSide}
+            depthWrite={false}
+          />
         </mesh>
       </group>
     </group>
@@ -455,7 +610,7 @@ function FloorPaper({ position, rotation }) {
   );
 }
 
-function OfficeChair({ position, rotationY = 0, scale = 1.30 }) {
+function OfficeChair({ position, rotationY = 0, scale = 1.3 }) {
   return (
     <group position={position} rotation={[0, rotationY, 0]} scale={scale}>
       <mesh position={[0, 0.52, 0]} castShadow receiveShadow>
@@ -473,7 +628,11 @@ function OfficeChair({ position, rotationY = 0, scale = 1.30 }) {
       {[0, 1, 2, 3, 4].map((i) => {
         const angle = (i / 5) * Math.PI * 2;
         return (
-          <mesh key={i} position={[Math.cos(angle) * 0.28, 0.04, Math.sin(angle) * 0.28]} castShadow>
+          <mesh
+            key={i}
+            position={[Math.cos(angle) * 0.28, 0.04, Math.sin(angle) * 0.28]}
+            castShadow
+          >
             <sphereGeometry args={[0.04, 6, 6]} />
             <meshStandardMaterial color="#333" roughness={0.6} />
           </mesh>
@@ -486,17 +645,21 @@ function OfficeChair({ position, rotationY = 0, scale = 1.30 }) {
 /* Mesa de reuniones — tamaño razonable (ya no ocupa la pared entera) */
 function MeetingTable({ position, width, depth }) {
   const legPositions = [
-    [-(width / 2 - 0.15), (depth / 2 - 0.15)],
-    [(width / 2 - 0.15), (depth / 2 - 0.15)],
+    [-(width / 2 - 0.15), depth / 2 - 0.15],
+    [width / 2 - 0.15, depth / 2 - 0.15],
     [-(width / 2 - 0.15), -(depth / 2 - 0.15)],
-    [(width / 2 - 0.15), -(depth / 2 - 0.15)],
+    [width / 2 - 0.15, -(depth / 2 - 0.15)],
   ];
   return (
     <group position={position}>
       {/* Tapa — madera algo más clara para que se lea en la penumbra */}
       <mesh castShadow receiveShadow>
         <boxGeometry args={[width, 0.08, depth]} />
-        <meshStandardMaterial color="#4a3018" roughness={0.3} metalness={0.05} />
+        <meshStandardMaterial
+          color="#4a3018"
+          roughness={0.3}
+          metalness={0.05}
+        />
       </mesh>
       {/* Canto */}
       <mesh position={[0, -0.06, 0]}>
@@ -519,14 +682,18 @@ function MeetingTable({ position, width, depth }) {
   );
 }
 
-function DeskItems({ surfaceY, tableZ, tableW, scale = 1.30 }) {
+function DeskItems({ surfaceY, tableZ, tableW, scale = 1.3 }) {
   return (
     <group position={[0, surfaceY, tableZ]} scale={[scale, scale, scale]}>
       {/* Taza de café */}
       <group position={[tableW * 0.22, 0.12, 0.35]} rotation={[0, -0.4, 0]}>
         <mesh castShadow receiveShadow>
           <cylinderGeometry args={[0.11, 0.09, 0.22, 20]} />
-          <meshStandardMaterial color="#bf360c" roughness={0.18} metalness={0.08} />
+          <meshStandardMaterial
+            color="#bf360c"
+            roughness={0.18}
+            metalness={0.08}
+          />
         </mesh>
         <mesh position={[0.1, 0, 0]} castShadow>
           <torusGeometry args={[0.055, 0.016, 8, 16, Math.PI * 1.5]} />
@@ -539,19 +706,32 @@ function DeskItems({ surfaceY, tableZ, tableW, scale = 1.30 }) {
       </group>
 
       {/* Lupa */}
-      <group position={[-tableW * 0.22, 0.07, 0.4]} rotation={[0.08, 0.65, -0.04]}>
+      <group
+        position={[-tableW * 0.22, 0.07, 0.4]}
+        rotation={[0.08, 0.65, -0.04]}
+      >
         <mesh position={[0, 0, -0.2]} rotation={[Math.PI / 2, 0, 0]} castShadow>
           <cylinderGeometry args={[0.018, 0.018, 0.24, 8]} />
           <meshStandardMaterial color="#5d4037" roughness={0.72} />
         </mesh>
         <mesh position={[0, 0, 0.06]} rotation={[Math.PI / 2, 0, 0]} castShadow>
           <torusGeometry args={[0.14, 0.02, 8, 24]} />
-          <meshStandardMaterial color="#cfd8dc" metalness={0.95} roughness={0.05} />
+          <meshStandardMaterial
+            color="#cfd8dc"
+            metalness={0.95}
+            roughness={0.05}
+          />
         </mesh>
         <mesh position={[0, 0, 0.06]}>
           <cylinderGeometry args={[0.127, 0.127, 0.007, 16]} />
-          <meshPhysicalMaterial color="#d0eeee" transparent opacity={0.22} roughness={0.04}
-            transmission={0.94} thickness={0.1} />
+          <meshPhysicalMaterial
+            color="#d0eeee"
+            transparent
+            opacity={0.22}
+            roughness={0.04}
+            transmission={0.94}
+            thickness={0.1}
+          />
         </mesh>
       </group>
 
@@ -580,35 +760,55 @@ function DeskItems({ surfaceY, tableZ, tableW, scale = 1.30 }) {
           <meshStandardMaterial color="#f9f9f9" roughness={0.92} />
         </mesh>
         {[-0.32, -0.18, -0.04, 0.1, 0.24].map((zv, i) => (
-          <mesh key={i} position={[-0.28, 0.015, zv]} rotation={[0, 0, Math.PI / 2]} castShadow>
+          <mesh
+            key={i}
+            position={[-0.28, 0.015, zv]}
+            rotation={[0, 0, Math.PI / 2]}
+            castShadow
+          >
             <torusGeometry args={[0.035, 0.007, 6, 12, Math.PI * 1.28]} />
-            <meshStandardMaterial color="#90a4ae" metalness={0.82} roughness={0.12} />
+            <meshStandardMaterial
+              color="#90a4ae"
+              metalness={0.82}
+              roughness={0.12}
+            />
           </mesh>
         ))}
       </group>
 
       {/* Hoja suelta */}
-      <mesh position={[tableW * 0.18, 0.003, 0.5]} rotation={[-Math.PI / 2, 0, 0.25]} receiveShadow>
+      <mesh
+        position={[tableW * 0.18, 0.003, 0.5]}
+        rotation={[-Math.PI / 2, 0, 0.25]}
+        receiveShadow
+      >
         <planeGeometry args={[0.36, 0.26]} />
         <meshStandardMaterial color="#f0ede5" roughness={0.9} />
       </mesh>
 
       {/* Carpetas manila */}
-      <FolderStack position={[-tableW * 0.15, 0, 0.15]} rotation={[0, -0.15, 0]} />
+      <FolderStack
+        position={[-tableW * 0.15, 0, 0.15]}
+        rotation={[0, -0.15, 0]}
+      />
     </group>
   );
 }
 
 /* ─── Hilos rojos entre chinchetas ──────────────────────────────────────── */
 function threadPts(p1, p2) {
-  const pts = [], N = 16, sag = Math.max(0.14, p1.distanceTo(p2) * 0.08);
+  const pts = [],
+    N = 16,
+    sag = Math.max(0.14, p1.distanceTo(p2) * 0.08);
   for (let i = 0; i <= N; i++) {
     const t = i / N;
-    pts.push(new THREE.Vector3(
-      p1.x + (p2.x - p1.x) * t,
-      p1.y + (p2.y - p1.y) * t - Math.sin(t * Math.PI) * sag,
-      p1.z + (p2.z - p1.z) * t + Math.sin(t * Math.PI) * 0.04
-    ));
+    pts.push(
+      new THREE.Vector3(
+        p1.x + (p2.x - p1.x) * t,
+        p1.y + (p2.y - p1.y) * t - Math.sin(t * Math.PI) * sag,
+        p1.z + (p2.z - p1.z) * t + Math.sin(t * Math.PI) * 0.04,
+      ),
+    );
   }
   return pts;
 }
@@ -622,31 +822,63 @@ function BankerLamp({ position, scale = 1.25 }) {
       {/* Base de latón / bronce */}
       <mesh castShadow position={[0, 0.02, 0]}>
         <cylinderGeometry args={[0.12, 0.14, 0.04, 12]} />
-        <meshStandardMaterial color="#c5a059" metalness={0.9} roughness={0.15} />
+        <meshStandardMaterial
+          color="#c5a059"
+          metalness={0.9}
+          roughness={0.15}
+        />
       </mesh>
       {/* Poste central de latón */}
       <mesh castShadow position={[0, 0.22, -0.04]} rotation={[0.15, 0, 0]}>
         <cylinderGeometry args={[0.015, 0.015, 0.4, 8]} />
-        <meshStandardMaterial color="#c5a059" metalness={0.9} roughness={0.15} />
+        <meshStandardMaterial
+          color="#c5a059"
+          metalness={0.9}
+          roughness={0.15}
+        />
       </mesh>
       {/* Codo superior */}
-      <mesh castShadow position={[0, 0.42, -0.02]} rotation={[Math.PI / 2, 0, 0]}>
+      <mesh
+        castShadow
+        position={[0, 0.42, -0.02]}
+        rotation={[Math.PI / 2, 0, 0]}
+      >
         <cylinderGeometry args={[0.015, 0.015, 0.08, 8]} />
-        <meshStandardMaterial color="#c5a059" metalness={0.9} roughness={0.15} />
+        <meshStandardMaterial
+          color="#c5a059"
+          metalness={0.9}
+          roughness={0.15}
+        />
       </mesh>
       {/* Pantalla de vidrio verde esmeralda */}
       <group position={[0, 0.43, 0.04]} rotation={[0.2, 0, 0]}>
         <mesh castShadow>
           <boxGeometry args={[0.34, 0.14, 0.18]} />
-          <meshStandardMaterial color="#0b5e28" roughness={0.1} metalness={0.1} />
+          <meshStandardMaterial
+            color="#0b5e28"
+            roughness={0.1}
+            metalness={0.1}
+          />
         </mesh>
         {/* Bombilla interna brillante */}
         <mesh position={[0, -0.04, 0]}>
           <sphereGeometry args={[0.04, 8, 8]} />
-          <meshStandardMaterial color="#fffde7" emissive="#fff59d" emissiveIntensity={3} toneMapped={false} />
+          <meshStandardMaterial
+            color="#fffde7"
+            emissive="#fff59d"
+            emissiveIntensity={3}
+            toneMapped={false}
+          />
         </mesh>
         {/* Luz puntual real de la lámpara */}
-        <pointLight position={[0, -0.06, 0]} intensity={1.8} color="#ffe082" distance={3.8} decay={1.8} castShadow />
+        <pointLight
+          position={[0, -0.06, 0]}
+          intensity={1.8}
+          color="#ffe082"
+          distance={3.8}
+          decay={1.8}
+          castShadow
+        />
       </group>
     </group>
   );
@@ -658,9 +890,9 @@ export default function InvestigationBoard({ boardW, boardH, boardEventos }) {
     computeRoomDims(boardW, boardH);
 
   /* Mesa de reuniones - redimensionada para ser más imponente y realista */
-  const TABLE_W = 9.4;          // Ancho absoluto mayor para dominar la escena frente al tablero achicado
-  const TABLE_D = 3.4;          // Más profunda
-  const TABLE_Z = 5.3;          // Posición en la sala
+  const TABLE_W = 9.4; // Ancho absoluto mayor para dominar la escena frente al tablero achicado
+  const TABLE_D = 3.4; // Más profunda
+  const TABLE_Z = 5.3; // Posición en la sala
   const TABLE_TOP = FLOOR_Y + 1.35; // Un poco más alta
   const SURFACE_Y = TABLE_TOP + 0.04;
 
@@ -677,7 +909,10 @@ export default function InvestigationBoard({ boardW, boardH, boardEventos }) {
   const threads = useMemo(() => {
     const list = [];
     for (let i = 0; i < boardEventos.length - 1; i++) {
-      const tp = threadPts(getPinPos(boardEventos[i]), getPinPos(boardEventos[i + 1]));
+      const tp = threadPts(
+        getPinPos(boardEventos[i]),
+        getPinPos(boardEventos[i + 1]),
+      );
       list.push({ id: boardEventos[i].id, tp, sp: shadowPts(tp) });
     }
     return list;
@@ -692,15 +927,36 @@ export default function InvestigationBoard({ boardW, boardH, boardEventos }) {
       <ambientLight intensity={0.4} color="#c8b89a" />
 
       {/* Iluminación */}
-      <pointLight position={[0, CEILING_Y - 0.5, 1.5]} intensity={2.2}
-        color="#ffe0b2" castShadow shadow-mapSize-width={1024} shadow-mapSize-height={1024} />
-      <spotLight position={[0, CEILING_Y - 0.2, 2.5]}
-        target-position={[0, 0, 0]} angle={0.45} penumbra={0.85}
-        intensity={3.5} color="#fff3e0" castShadow />
+      <pointLight
+        position={[0, CEILING_Y - 0.5, 1.5]}
+        intensity={2.2}
+        color="#ffe0b2"
+        castShadow
+        shadow-mapSize-width={1024}
+        shadow-mapSize-height={1024}
+      />
+      <spotLight
+        position={[0, CEILING_Y - 0.2, 2.5]}
+        target-position={[0, 0, 0]}
+        angle={0.45}
+        penumbra={0.85}
+        intensity={3.5}
+        color="#fff3e0"
+        castShadow
+      />
       {/* Luz cálida sobre la mesa (antes quedaba en penumbra) */}
-      <pointLight position={[0, CEILING_Y - 0.6, TABLE_Z]} intensity={1.4}
-        color="#ffe8c2" distance={10} decay={2} />
-      <directionalLight position={[-ROOM_HALF_W, CEILING_Y - 1, 4]} intensity={0.4} color="#bdd7ee" />
+      <pointLight
+        position={[0, CEILING_Y - 0.6, TABLE_Z]}
+        intensity={1.4}
+        color="#ffe8c2"
+        distance={10}
+        decay={2}
+      />
+      <directionalLight
+        position={[-ROOM_HALF_W, CEILING_Y - 1, 4]}
+        intensity={0.4}
+        color="#bdd7ee"
+      />
 
       {/* Pared trasera */}
       <mesh position={[0, WALL_CY, -0.15]} receiveShadow>
@@ -708,54 +964,107 @@ export default function InvestigationBoard({ boardW, boardH, boardEventos }) {
         <meshStandardMaterial map={tallWallTex} roughness={0.88} />
       </mesh>
       {/* Paredes laterales */}
-      <mesh position={[-ROOM_HALF_W, WALL_CY, ROOM_CZ]} receiveShadow rotation={[0, Math.PI / 2, 0]}>
+      <mesh
+        position={[-ROOM_HALF_W, WALL_CY, ROOM_CZ]}
+        receiveShadow
+        rotation={[0, Math.PI / 2, 0]}
+      >
         <boxGeometry args={[ROOM_D, WALL_H, 0.14]} />
         <meshStandardMaterial map={tallWallTex} roughness={0.88} />
       </mesh>
-      <mesh position={[ROOM_HALF_W, WALL_CY, ROOM_CZ]} receiveShadow rotation={[0, -Math.PI / 2, 0]}>
+      <mesh
+        position={[ROOM_HALF_W, WALL_CY, ROOM_CZ]}
+        receiveShadow
+        rotation={[0, -Math.PI / 2, 0]}
+      >
         <boxGeometry args={[ROOM_D, WALL_H, 0.14]} />
         <meshStandardMaterial map={tallWallTex} roughness={0.88} />
       </mesh>
 
       {/* Techo */}
-      <mesh position={[0, CEILING_Y, ROOM_CZ]} rotation={[Math.PI / 2, 0, 0]} receiveShadow>
+      <mesh
+        position={[0, CEILING_Y, ROOM_CZ]}
+        rotation={[Math.PI / 2, 0, 0]}
+        receiveShadow
+      >
         <planeGeometry args={[ROOM_HALF_W * 2 + 2, ROOM_D + 0.4]} />
         <meshStandardMaterial color="#9c9184" roughness={0.95} />
       </mesh>
 
       {/* Luminarias de techo */}
-      <CeilingFixture position={[0, CEILING_Y - 0.05, 1.4]} w={Math.min(boardW * 0.5, 4)} />
+      <CeilingFixture
+        position={[0, CEILING_Y - 0.05, 1.4]}
+        w={Math.min(boardW * 0.5, 4)}
+      />
       <CeilingFixture position={[0, CEILING_Y - 0.05, TABLE_Z]} w={3} />
 
       {/* Suelo */}
-      <mesh position={[0, FLOOR_Y, ROOM_CZ]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+      <mesh
+        position={[0, FLOOR_Y, ROOM_CZ]}
+        rotation={[-Math.PI / 2, 0, 0]}
+        receiveShadow
+      >
         <planeGeometry args={[ROOM_HALF_W * 2 + 2, ROOM_D]} />
         <meshStandardMaterial map={parquetTex} roughness={0.62} />
       </mesh>
 
       {/* Alfombra bajo la mesa */}
-      <Rug position={[0, FLOOR_Y + 0.004, TABLE_Z]} w={TABLE_W + 2.4} d={TABLE_D + 2.6} />
+      <Rug
+        position={[0, FLOOR_Y + 0.004, TABLE_Z]}
+        w={TABLE_W + 2.4}
+        d={TABLE_D + 2.6}
+      />
 
       {/* Zócalos */}
       <mesh position={[0, FLOOR_Y + 0.08, -0.06]}>
         <boxGeometry args={[ROOM_HALF_W * 2 + 2, 0.16, 0.06]} />
         <meshStandardMaterial color="#7a5c3e" roughness={0.65} />
       </mesh>
-      <mesh position={[-ROOM_HALF_W + 0.09, FLOOR_Y + 0.08, ROOM_CZ]} rotation={[0, Math.PI / 2, 0]}>
+      <mesh
+        position={[-ROOM_HALF_W + 0.09, FLOOR_Y + 0.08, ROOM_CZ]}
+        rotation={[0, Math.PI / 2, 0]}
+      >
         <boxGeometry args={[ROOM_D, 0.16, 0.06]} />
         <meshStandardMaterial color="#7a5c3e" roughness={0.65} />
       </mesh>
-      <mesh position={[ROOM_HALF_W - 0.09, FLOOR_Y + 0.08, ROOM_CZ]} rotation={[0, -Math.PI / 2, 0]}>
+      <mesh
+        position={[ROOM_HALF_W - 0.09, FLOOR_Y + 0.08, ROOM_CZ]}
+        rotation={[0, -Math.PI / 2, 0]}
+      >
         <boxGeometry args={[ROOM_D, 0.16, 0.06]} />
         <meshStandardMaterial color="#7a5c3e" roughness={0.65} />
       </mesh>
 
       {/* Decoración de paredes */}
-      <WallPicture position={[-ROOM_HALF_W + 0.1, 1.5, 1.0]} rotation={[0, Math.PI / 2, 0]} w={1.0} h={0.75} />
-      <WallPicture position={[-ROOM_HALF_W + 0.1, 1.5, 3.5]} rotation={[0, Math.PI / 2, 0]} w={0.9} h={1.1} />
-      <WallClock position={[ROOM_HALF_W - 0.12, CEILING_Y - 1.5, 2.2]} rotation={[0, -Math.PI / 2, 0]} />
-      <WindowBlinds position={[-ROOM_HALF_W + 0.12, WALL_CY + 0.6, 7.6]} rotation={[0, Math.PI / 2, 0]} />
-      <OfficeDoor position={[ROOM_HALF_W - 0.12, FLOOR_Y + 1.53, 8.8]} rotation={[0, -Math.PI / 2, 0]} />
+      <InstitutionalLogo
+        position={[boardW / 2 + 2.2, 1.4, -0.08]}
+        w={1.1}
+        h={1.1}
+      />
+      <WallPicture
+        position={[-ROOM_HALF_W + 0.1, 1.5, 1.0]}
+        rotation={[0, Math.PI / 2, 0]}
+        w={1.0}
+        h={0.75}
+      />
+      <WallPicture
+        position={[-ROOM_HALF_W + 0.1, 1.5, 3.5]}
+        rotation={[0, Math.PI / 2, 0]}
+        w={0.9}
+        h={1.1}
+      />
+      <WallClock
+        position={[ROOM_HALF_W - 0.12, CEILING_Y - 1.5, 2.2]}
+        rotation={[0, -Math.PI / 2, 0]}
+      />
+      <WindowBlinds
+        position={[-ROOM_HALF_W + 0.12, WALL_CY + 0.6, 7.6]}
+        rotation={[0, Math.PI / 2, 0]}
+      />
+      <OfficeDoor
+        position={[ROOM_HALF_W - 0.12, FLOOR_Y + 1.53, 8.8]}
+        rotation={[0, -Math.PI / 2, 0]}
+      />
 
       {/* Tablero de corcho con marco */}
       <group position={[0, 0, -0.05]}>
@@ -779,41 +1088,98 @@ export default function InvestigationBoard({ boardW, boardH, boardEventos }) {
       {/* Hilos rojos */}
       {threads.map(({ id, tp, sp }) => (
         <group key={`th-${id}`}>
-          <Line points={sp} color="#000" lineWidth={1.4} transparent opacity={0.28} />
-          <Line points={tp} color="#e53935" lineWidth={3.8} transparent opacity={0.97} />
+          <Line
+            points={sp}
+            color="#000"
+            lineWidth={0.8}
+            transparent
+            opacity={0.15}
+          />
+          <Line
+            points={tp}
+            color="#c62828"
+            lineWidth={1.8}
+            transparent
+            opacity={0.65}
+          />
         </group>
       ))}
 
       {/* Mobiliario */}
-      <MeetingTable position={[0, TABLE_TOP, TABLE_Z]} width={TABLE_W} depth={TABLE_D} />
+      <MeetingTable
+        position={[0, TABLE_TOP, TABLE_Z]}
+        width={TABLE_W}
+        depth={TABLE_D}
+      />
       <DeskItems surfaceY={SURFACE_Y} tableZ={TABLE_Z} tableW={TABLE_W} />
       <BankerLamp position={[0, SURFACE_Y, TABLE_Z - 0.1]} />
       <FilingCabinet position={[-ROOM_HALF_W + 0.38, FLOOR_Y + 0.7, -0.08]} />
       <FilingCabinet position={[-ROOM_HALF_W + 1.05, FLOOR_Y + 0.7, -0.08]} />
-      <FloorLamp position={[ROOM_HALF_W - 1.3, FLOOR_Y, TABLE_Z + 1.2]} rotationY={-0.6} />
-      
+      <FloorLamp
+        position={[ROOM_HALF_W - 1.3, FLOOR_Y, TABLE_Z + 1.2]}
+        rotationY={-0.6}
+      />
+
       {/* Sillas rodeando la gran mesa de reuniones */}
-      <OfficeChair position={[-TABLE_W * 0.25, FLOOR_Y, TABLE_Z + 1.9]} rotationY={0.2} />
-      <OfficeChair position={[TABLE_W * 0.22, FLOOR_Y, TABLE_Z + 2.0]} rotationY={-0.25} />
-      <OfficeChair position={[-TABLE_W / 2 - 0.45, FLOOR_Y, TABLE_Z]} rotationY={Math.PI / 2} />
-      <OfficeChair position={[TABLE_W / 2 + 0.45, FLOOR_Y, TABLE_Z]} rotationY={-Math.PI / 2} />
-      
+      <OfficeChair
+        position={[-TABLE_W * 0.25, FLOOR_Y, TABLE_Z + 2.5]}
+        rotationY={2.5}
+      />
+      <OfficeChair
+        position={[TABLE_W * 0.22, FLOOR_Y, TABLE_Z + 2.5]}
+        rotationY={-2.7}
+      />
+      <OfficeChair
+        position={[-TABLE_W / 2 - 0.45, FLOOR_Y, TABLE_Z]}
+        rotationY={Math.PI / 2}
+      />
+      <OfficeChair
+        position={[TABLE_W / 2 + 0.45, FLOOR_Y, TABLE_Z]}
+        rotationY={-Math.PI / 2}
+      />
+
       <TrashBin position={[-TABLE_W / 2 - 0.7, FLOOR_Y, TABLE_Z + 0.5]} />
 
       {/* Cajas de evidencia apiladas en el rincón */}
-      <group position={[ROOM_HALF_W - 1.1, FLOOR_Y, 0.55]} rotation={[0, -0.25, 0]}>
+      <group
+        position={[ROOM_HALF_W - 1.1, FLOOR_Y, 0.55]}
+        rotation={[0, -0.25, 0]}
+      >
         <EvidenceBox position={[0, 0.21, 0]} label="EVIDENCIA" />
-        <EvidenceBox position={[0.04, 0.66, 0.02]} rotation={[0, 0.18, 0]} label="CASO 1337" />
-        <EvidenceBox position={[-0.02, 1.11, -0.01]} rotation={[0, -0.12, 0]} label="UFECI" />
+        <EvidenceBox
+          position={[0.04, 0.66, 0.02]}
+          rotation={[0, 0.18, 0]}
+          label="CASO 1337"
+        />
+        <EvidenceBox
+          position={[-0.02, 1.11, -0.01]}
+          rotation={[0, -0.12, 0]}
+          label="UFECI"
+        />
       </group>
 
       {/* Papeles tirados */}
       {[
-        [[-0.5, FLOOR_Y + 0.001, 2.8], [-Math.PI / 2, 0, 0.3]],
-        [[1.2, FLOOR_Y + 0.001, 3.1], [-Math.PI / 2, 0, -0.15]],
-        [[-1.8, FLOOR_Y + 0.001, 2.5], [-Math.PI / 2, 0, 0.7]],
-        [[0.2, FLOOR_Y + 0.001, 3.8], [-Math.PI / 2, 0, 1.2]],
-        [[-ROOM_HALF_W + 1.6, FLOOR_Y + 0.001, 1.0], [-Math.PI / 2, 0, 0.2]],
+        [
+          [-0.5, FLOOR_Y + 0.001, 2.8],
+          [-Math.PI / 2, 0, 0.3],
+        ],
+        [
+          [1.2, FLOOR_Y + 0.001, 3.1],
+          [-Math.PI / 2, 0, -0.15],
+        ],
+        [
+          [-1.8, FLOOR_Y + 0.001, 2.5],
+          [-Math.PI / 2, 0, 0.7],
+        ],
+        [
+          [0.2, FLOOR_Y + 0.001, 3.8],
+          [-Math.PI / 2, 0, 1.2],
+        ],
+        [
+          [-ROOM_HALF_W + 1.6, FLOOR_Y + 0.001, 1.0],
+          [-Math.PI / 2, 0, 0.2],
+        ],
       ].map(([pos, rot], i) => (
         <FloorPaper key={i} position={pos} rotation={rot} />
       ))}

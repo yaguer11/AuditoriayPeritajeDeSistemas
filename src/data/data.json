@@ -4,10 +4,34 @@
       "id": "peritaje",
       "titulo": "Peritaje Informático — Caso Fútbol Libre",
       "subtitulo": "Streaming ilegal · ISO/IEC 27037 & 27042 · UFECI",
-      "wikiUrl": "https://tvgimenez02.atlassian.net/wiki/spaces/1234/overview?homepageId=589997",
+      "wikiUrl": "https://tvgimenez02.atlassian.net/wiki/spaces/1234/pages/18612225/INFORME+PERICIAL+INFORM+TICO+FORENSE+-+F+TBOL+LIBRE",
       "colorPrimario": "#00e5ff",
       "colorAcento": "#ff3d71",
       "eventos": [
+        {
+          "id": "per-00",
+          "icono": "flag",
+          "fase": "FASE I",
+          "subtitle": "Planificación previa al operativo",
+          "titulo": "Planificación previa al operativo",
+          "fecha": "08/07/2024",
+          "hora": "Jornada previa (3 a 7 días antes)",
+          "responsable": "Equipo pericial (DEFR / DES)",
+          "herramientas": [
+            "Pendrive forense estéril",
+            "Winpmem",
+            "Script CMD triage",
+            "KAPE",
+            "Tableau T35689iu",
+            "TAP de red pasivo",
+            "Bolsas antiestáticas"
+          ],
+          "descripcion": "Objetivo: Preparar los recursos y definir el plan de acción antes de la intervención. Definición de objetos de interés esperados en la escena (workstations, discos, USBs, routers). Preparación del pendrive forense estéril (Winpmem, Script de triage, Volatility 3, KAPE) y kit de adquisición física (Tableau T35689iu, FTK Imager, TAP pasivo, bolsas antiestáticas y precintos). Designación de roles (Perito DEFR de primera respuesta y Perito DES de análisis técnico), evaluación de riesgos de la evidencia según ISO 27037 §7 y coordinación de puntos de pericia con el fiscal a cargo.",
+          "hallazgo": "Plan de acción formalizado + kit forense estéril preparado y coordinado con fiscalía",
+          "criticidad": "INFO",
+          "imagen": "/assets/planificacion-actividades.jpg",
+          "linkUrl": "https://tvgimenez02.atlassian.net/wiki/spaces/1234/pages/1245191/FASE+I+PLANIFICACI+N+PREVIA+AL+OPERATIVO"
+        },
         {
           "id": "per-01",
           "icono": "map-pin",
@@ -24,7 +48,8 @@
           "descripcion": "El equipo pericial arriba al domicilio allanado. El equipo EV-001 (Workstation Dell) se encontró encendido ejecutando procesos de streaming HLS en vivo. Se documenta el estado de la escena, se fotografía cada dispositivo in situ y se asegura el perímetro para evitar la manipulación remota o el apagado intencional de los equipos.",
           "hallazgo": "EV-001 encendida transmitiendo señal HLS — evidencia volátil en riesgo",
           "criticidad": "ALTA",
-          "imagen": "/assets/escena-allanamiento.png"
+          "imagen": "/assets/escena-allanamiento.png",
+          "linkUrl": "https://tvgimenez02.atlassian.net/wiki/spaces/1234/pages/1277972/FASE+II+LLEGADA+Y+ASEGURAMIENTO+DE+LA+ESCENA"
         },
         {
           "id": "per-02",
@@ -38,7 +63,8 @@
           "descripcion": "Con el equipo aún encendido se ejecuta el volcado completo de la memoria RAM (16 GB) utilizando Winpmem desde una unidad USB estéril, respetando el orden de volatilidad de ISO/IEC 27037. Este paso captura procesos activos, conexiones de red y datos en portapapeles que se perderían con el apagado.",
           "hallazgo": "Imagen de RAM de 16 GB adquirida sin alterar el sistema",
           "criticidad": "CRÍTICA",
-          "imagen": "/assets/ram-dump.png"
+          "imagen": "/assets/ram-dump.png",
+          "linkUrl": "https://tvgimenez02.atlassian.net/wiki/spaces/1234/pages/1343495/FASE+III+TRIAGE+EN+VIVO+equipos+encendidos"
         },
         {
           "id": "per-03",
@@ -52,7 +78,59 @@
           "descripcion": "Se captura el tráfico de red en tránsito mediante un TAP pasivo interpuesto en el enlace, sin inyectar paquetes ni alterar la comunicación. Acto seguido se procede al secuestro del router MikroTik (EV-005), preservando su configuración, tablas NAT y logs de conexión.",
           "hallazgo": "Tráfico HLS saliente capturado + router EV-005 secuestrado",
           "criticidad": "ALTA",
-          "imagen": "/assets/tap-red.png"
+          "imagen": "/assets/tap-red.png",
+          "linkUrl": "https://tvgimenez02.atlassian.net/wiki/spaces/1234/pages/1179659/6.2+Inventario+de+Dispositivos+Secuestrados"
+        },
+        {
+          "id": "per-05",
+          "icono": "tool",
+          "fase": "FASE IV",
+          "titulo": "Extracción física del disco NVMe EV-002",
+          "fecha": "15/07/2024",
+          "hora": "21:30 hs",
+          "responsable": "Germán Muñoz",
+          "herramientas": [
+            "Guantes antiestáticos",
+            "Kit de destornilladores ESD"
+          ],
+          "descripcion": "Se extrae físicamente el disco NVMe (EV-002) de la workstation utilizando guantes antiestáticos para evitar contaminación por descarga electrostática o pérdida de integridad del medio. El disco se rotula y fotografía antes de su adquisición.",
+          "hallazgo": "Disco NVMe EV-002 extraído sin daños",
+          "criticidad": "ALTA",
+          "imagen": "/assets/extraccion-nvme.png",
+          "linkUrl": "https://tvgimenez02.atlassian.net/wiki/spaces/1234/pages/3637249/6.2.1+Prueba+Fotografica+de+Dispositivos+Secuestrados"
+        },
+        {
+          "id": "per-06",
+          "icono": "copy",
+          "fase": "FASE IV",
+          "titulo": "Clonación forense bit a bit (.E01)",
+          "fecha": "15/07/2024",
+          "hora": "21:45 hs",
+          "responsable": "Germán Muñoz",
+          "herramientas": [
+            "FTK Imager",
+            "Bloqueador de escritura Tableau T35689iu"
+          ],
+          "descripcion": "Se genera la imagen forense bit a bit del disco EV-002 en formato .E01 (Expert Witness Format) utilizando FTK Imager, con el disco conectado a través del bloqueador de escritura por hardware Tableau T35689iu, garantizando que ningún byte del original pueda ser modificado durante la adquisición.",
+          "hallazgo": "Imagen .E01 completa — original intacto gracias al write-blocker",
+          "criticidad": "CRÍTICA",
+          "imagen": "/assets/ftk-imager.png",
+          "linkUrl": "https://tvgimenez02.atlassian.net/wiki/spaces/1234/pages/1507350/FASE+IV+ADQUISICI+N+DE+ALMACENAMIENTO"
+        },
+        {
+          "id": "per-07",
+          "icono": "tick",
+          "fase": "FASE IV",
+          "titulo": "Verificación de hashes SHA-256",
+          "fecha": "15/07/2024",
+          "hora": "23:40 hs",
+          "responsable": "Germán Muñoz",
+          "herramientas": ["SHA-256", "FTK Imager (verify)"],
+          "descripcion": "Se calculan y verifican los hashes criptográficos SHA-256 de la evidencia digital: el hash del original coincide con el de la imagen .E01, garantizando el principio de inalterabilidad. Los valores quedan asentados en el acta y en el registro de cadena de custodia.",
+          "hallazgo": "Hash original = hash copia → integridad demostrada",
+          "criticidad": "CRÍTICA",
+          "imagen": "/assets/hash-sha256.png",
+          "linkUrl": "https://tvgimenez02.atlassian.net/wiki/spaces/1234/pages/5242888/VALORES+HASH+DOCUMENTADOS"
         },
         {
           "id": "per-04",
@@ -70,132 +148,33 @@
           "descripcion": "Finalizado el triage se realiza el apagado técnico (soft shutdown) de la Workstation EV-001. El equipo se embala en bolsas antiestáticas, se sella con cinta tamper-evident y se precinta con numeración única, dando inicio formal al registro de cadena de custodia.",
           "hallazgo": "EV-001 preservada e ingresada a cadena de custodia",
           "criticidad": "MEDIA",
-          "imagen": "/assets/precintado.png"
+          "imagen": "/assets/precintado.png",
+          "linkUrl": "https://tvgimenez02.atlassian.net/wiki/spaces/1234/pages/1769473/6.1+Procedimiento+de+Secuestro+en+la+Escena"
         },
         {
-          "id": "per-05",
-          "icono": "tool",
-          "fase": "FASE IV",
-          "titulo": "Extracción física del disco NVMe EV-002",
-          "fecha": "15/07/2024",
-          "hora": "21:30 hs",
-          "responsable": "Germán Muñoz",
-          "herramientas": [
-            "Guantes antiestáticos",
-            "Kit de destornilladores ESD"
-          ],
-          "descripcion": "Se extrae físicamente el disco NVMe (EV-002) de la workstation utilizando guantes antiestáticos para evitar contaminación por descarga electrostática o pérdida de integridad del medio. El disco se rotula y fotografía antes de su adquisición.",
-          "hallazgo": "Disco NVMe EV-002 extraído sin daños",
-          "criticidad": "ALTA",
-          "imagen": "/assets/extraccion-nvme.png"
-        },
-        {
-          "id": "per-06",
-          "icono": "copy",
-          "fase": "FASE IV",
-          "titulo": "Clonación forense bit a bit (.E01)",
-          "fecha": "15/07/2024",
-          "hora": "21:45 hs",
-          "responsable": "Germán Muñoz",
-          "herramientas": [
-            "FTK Imager",
-            "Bloqueador de escritura Tableau T35689iu"
-          ],
-          "descripcion": "Se genera la imagen forense bit a bit del disco EV-002 en formato .E01 (Expert Witness Format) utilizando FTK Imager, con el disco conectado a través del bloqueador de escritura por hardware Tableau T35689iu, garantizando que ningún byte del original pueda ser modificado durante la adquisición.",
-          "hallazgo": "Imagen .E01 completa — original intacto gracias al write-blocker",
-          "criticidad": "CRÍTICA",
-          "imagen": "/assets/ftk-imager.png"
-        },
-        {
-          "id": "per-07",
-          "icono": "tick",
-          "fase": "FASE IV",
-          "titulo": "Verificación de hashes SHA-256",
-          "fecha": "15/07/2024",
-          "hora": "23:40 hs",
-          "responsable": "Germán Muñoz",
-          "herramientas": ["SHA-256", "FTK Imager (verify)"],
-          "descripcion": "Se calculan y verifican los hashes criptográficos SHA-256 de la evidencia digital: el hash del original coincide con el de la imagen .E01, garantizando el principio de inalterabilidad. Los valores quedan asentados en el acta y en el registro de cadena de custodia.",
-          "hallazgo": "Hash original = hash copia → integridad demostrada",
-          "criticidad": "CRÍTICA",
-          "imagen": "/assets/hash-sha256.png"
-        },
-        {
-          "id": "per-08",
+          "id": "per-lab",
           "icono": "lab",
           "fase": "FASE VI",
-          "titulo": "Análisis de RAM — Process Hollowing y seed phrase",
+          "subtitle": "Cuarto de Investigación — Análisis Forense",
+          "titulo": "Análisis Forense en Laboratorio — Cuarto de Investigación",
           "fecha": "16/07/2024",
           "hora": "10:00 hs",
-          "responsable": "Germán Muñoz",
+          "responsable": "Equipo de laboratorio y pericial",
           "herramientas": [
             "Volatility 3",
-            "plugins pslist / malfind / clipboard"
-          ],
-          "descripcion": "En laboratorio se analiza el volcado de RAM con Volatility 3. Se detecta una técnica de Process Hollowing sobre svchost.exe (PID 1337), utilizada para ocultar el proceso de captura y retransmisión. Además se extrae del portapapeles la seed phrase de una billetera de criptomonedas.",
-          "hallazgo": "Process Hollowing en svchost.exe (PID 1337) + seed phrase recuperada",
-          "criticidad": "CRÍTICA",
-          "imagen": "/assets/volatility-ram.png"
-        },
-        {
-          "id": "per-09",
-          "icono": "folder",
-          "fase": "FASE VI",
-          "titulo": "Análisis del sistema de archivos",
-          "fecha": "16/07/2024",
-          "hora": "11:20 hs",
-          "responsable": "Valentín Giménez",
-          "herramientas": ["Autopsy", "Magnet AXIOM", "SQLite Browser"],
-          "descripcion": "Se indexa la imagen forense .E01 con Autopsy y Magnet AXIOM. Se extrae el historial de navegación de Firefox (accesos al panel de administración del sitio) y las bases de datos SQLite de Telegram con conversaciones sobre la venta de accesos y cobros.",
-          "hallazgo": "Historial de Firefox + chats de Telegram vinculan al imputado con la operación",
-          "criticidad": "ALTA",
-          "imagen": "/assets/autopsy-axiom.png"
-        },
-        {
-          "id": "per-10",
-          "icono": "key",
-          "fase": "FASE VI",
-          "titulo": "Análisis del Registro de Windows",
-          "fecha": "16/07/2024",
-          "hora": "12:30 hs",
-          "responsable": "Elenio García",
-          "herramientas": ["RegRipper", "hive SYSTEM", "subclave USBSTOR"],
-          "descripcion": "Se ejecuta RegRipper sobre el hive SYSTEM de la imagen forense. La subclave USBSTOR revela la conexión histórica de 3 dispositivos USB cuyos números de serie no corresponden a ningún dispositivo hallado en la escena, sugiriendo evidencia sustraída o resguardada en otro lugar.",
-          "hallazgo": "3 dispositivos USB conectados históricamente, ausentes en la escena",
-          "criticidad": "ALTA",
-          "imagen": "/assets/regripper-usbstor.webp"
-        },
-        {
-          "id": "per-11",
-          "icono": "trash-can",
-          "fase": "FASE VI",
-          "titulo": "Data Carving — Recuperación de eliminados",
-          "fecha": "Fase de Laboratorio",
-          "hora": "—",
-          "responsable": "Equipo de laboratorio",
-          "herramientas": ["PhotoRec", "análisis de espacio no asignado"],
-          "descripcion": "Se ejecuta PhotoRec sobre el espacio no asignado del disco, recuperando exitosamente el archivo wallet.dat (billetera Bitcoin eliminada) y fragmentos .ts de video con marcas de agua de ESPN y Turner, que habían sido borrados para eliminar rastros de la retransmisión.",
-          "hallazgo": "wallet.dat + fragmentos .ts de ESPN/Turner recuperados del espacio no asignado",
-          "criticidad": "CRÍTICA",
-          "imagen": "/assets/photorec-carving.png"
-        },
-        {
-          "id": "per-12",
-          "icono": "wallet",
-          "fase": "FASE VI",
-          "titulo": "Metadatos y trazabilidad Blockchain",
-          "fecha": "Fase de Laboratorio",
-          "hora": "—",
-          "responsable": "Equipo de laboratorio",
-          "herramientas": [
+            "Autopsy & AXIOM",
+            "RegRipper",
+            "PhotoRec",
             "ExifTool",
-            "Explorador blockchain",
-            "OBS Studio (artefactos)"
+            "SQLite Browser",
+            "Blockchain Explorer"
           ],
-          "descripcion": "Con ExifTool se extraen fechas de creación ocultas en capturas de pantalla de OBS Studio, que ubican temporalmente la actividad de streaming. El análisis on-chain traza USD 87.400 distribuidos en 156 transacciones de la red Bitcoin vinculadas a la wallet recuperada.",
-          "hallazgo": "USD 87.400 en 156 transacciones BTC trazadas a la wallet del imputado",
+          "descripcion": "Análisis exhaustivo en laboratorio sobre el volcado de memoria RAM y la imagen forense .E01. Se emplean herramientas especializadas para examen de procesos, registro, espacios no asignados, metadatos y trazabilidad cripto. Ingrese al Cuarto de Investigación para inspeccionar cada hallazgo en detalle.",
+          "hallazgo": "9 hallazgos forenses procesados en el Cuarto de Investigación 3D",
           "criticidad": "CRÍTICA",
-          "imagen": "/assets/blockchain-trace.png"
+          "imagen": "/assets/volatility-ram.png",
+          "linkUrl": "https://tvgimenez02.atlassian.net/wiki/spaces/1234/pages/1572871/FASE+VI+AN+LISIS+FORENSE+laboratorio",
+          "isRoomLauncher": true
         },
         {
           "id": "per-13",
@@ -209,7 +188,8 @@
           "descripcion": "Se concluye la pericia con la elaboración del dictamen final: el informe forense integra todos los hallazgos, la cadena de custodia y los anexos técnicos. El documento se firma digitalmente con certificado X.509, garantizando autoría e integridad ante el juzgado.",
           "hallazgo": "Informe pericial firmado digitalmente (X.509)",
           "criticidad": "MEDIA",
-          "imagen": "/assets/firma-digital.jpg"
+          "imagen": "/assets/firma-digital.png",
+          "linkUrl": "https://tvgimenez02.atlassian.net/wiki/spaces/1234/pages/14843905/8.+DICTAMEN+FINAL"
         },
         {
           "id": "per-14",
@@ -223,7 +203,8 @@
           "descripcion": "Toda la evidencia física y digital se almacena de forma segura en el depósito de la UFECI (Unidad Fiscal Especializada en Ciberdelincuencia), cerrando el ciclo de cadena de custodia y quedando a disposición del tribunal para eventuales contrapericias.",
           "hallazgo": "Evidencia resguardada — cadena de custodia cerrada sin observaciones",
           "criticidad": "MEDIA",
-          "imagen": "/assets/deposito-ufeci.png"
+          "imagen": "/assets/deposito-ufeci.png",
+          "linkUrl": "https://tvgimenez02.atlassian.net/wiki/spaces/1234/pages/1212500/ANEXO+B+-+VALIDACION+DE+CADENAS+DE+CUSTODIA"
         }
       ],
       "evidencias": [
@@ -240,7 +221,7 @@
           "hallazgo": "Conexiones ESTABLISHED en puerto 22 asociadas a svchost.exe",
           "criticidad": "CRÍTICA",
           "imagen": "/assets/ram-dump.png",
-          "link": "https://tvgimenez02.atlassian.net/wiki/spaces/1234/pages/31064067/H-01+salida+del+script+de+triage?atlOrigin=eyJpIjoiMjMzOGY0MmIyN2FhNDI5M2E2MGM2YzgyNDI2OWRiM2MiLCJwIjoiYyJ9"
+          "link": "https://tvgimenez02.atlassian.net/wiki/spaces/1234/pages/31064067/H-01+salida+del+script+de+triage"
         },
         {
           "id": "h-02",
@@ -255,7 +236,7 @@
           "hallazgo": "Wireshark con los requests .m3u8 y segmentos .ts hacia IPs de Cloudflare",
           "criticidad": "ALTA",
           "imagen": "/assets/tap-red.png",
-          "link": "https://tvgimenez02.atlassian.net/wiki/x/BwDnAQ"
+          "link": "https://tvgimenez02.atlassian.net/wiki/spaces/1234/pages/31916039/H-02+An+lisis+del+tr+fico+de+red+con+Wireshark"
         },
         {
           "id": "h-03",
@@ -269,7 +250,8 @@
           "descripcion": "Volatility 3 detecta regiones RWX ocultas en svchost.exe (PID 1337). El plugin clipboard recupera la frase de recuperación de la billetera: 'appl banan cherr ... [parcializada por seguridad]'.",
           "hallazgo": "Volatility 3 malfind mostrando las regiones RWX en svchost.exe y clipboard dump",
           "criticidad": "CRÍTICA",
-          "imagen": "/assets/volatility-ram.png"
+          "imagen": "/assets/volatility-ram.png",
+          "link": "https://tvgimenez02.atlassian.net/wiki/spaces/1234/pages/1572891/7.1+Clasificaci+n+de+la+Evidencia+por+Volatilidad"
         },
         {
           "id": "h-04",
@@ -284,7 +266,7 @@
           "hallazgo": "Listado de Prefetch en KAPE con 38 ejecuciones de WidevineDumper.exe",
           "criticidad": "ALTA",
           "imagen": "/assets/autopsy-axiom.png",
-          "link": "https://tvgimenez02.atlassian.net/wiki/spaces/1234/pages/30867465/H-04+listado+de+Prefetch+en+KAPE?atlOrigin=eyJpIjoiZmRiZTI1NGRjNjk0NDRiNGJkOTdkYjUyMDVhNTIzY2EiLCJwIjoiYyJ9"
+          "link": "https://tvgimenez02.atlassian.net/wiki/spaces/1234/pages/30867465/H-04+listado+de+Prefetch+en+KAPE"
         },
         {
           "id": "h-05",
@@ -299,7 +281,7 @@
           "hallazgo": "RegRipper mostrando la subclave USBSTOR con 3 números de serie de USB ausentes",
           "criticidad": "ALTA",
           "imagen": "/assets/regripper-usbstor.webp",
-          "link": "https://tvgimenez02.atlassian.net/wiki/x/GwDXAQ"
+          "link": "https://tvgimenez02.atlassian.net/wiki/spaces/1234/pages/30867483/H-05+RegRipper+mostrando+la+subclave+USBSTOR+con+los+3+n+meros+de+serie+de+los+USB+ausentes."
         },
         {
           "id": "h-06",
@@ -329,7 +311,7 @@
           "hallazgo": "Explorador blockchain con la dirección del wallet mostrando 156 transacciones / total USD 87.400",
           "criticidad": "CRÍTICA",
           "imagen": "/assets/blockchain-trace.png",
-          "link": "https://tvgimenez02.atlassian.net/wiki/x/AoAOAg"
+          "link": "https://tvgimenez02.atlassian.net/wiki/spaces/1234/pages/34504706/H-07+An+lisis+de+transacciones+mediante+explorador+de+blockchain"
         },
         {
           "id": "h-08",
@@ -344,7 +326,7 @@
           "hallazgo": "ExifTool con los metadatos EXIF (fecha oculta + parámetros de OBS) de una captura",
           "criticidad": "ALTA",
           "imagen": "/assets/blockchain-trace.png",
-          "link": "https://tvgimenez02.atlassian.net/wiki/x/IgDaAQ"
+          "link": "https://tvgimenez02.atlassian.net/wiki/spaces/1234/pages/31064098/H-08+ExifTool+con+los+metadatos+EXIF+fecha+de+creaci+n+oculta+par+metros+de+OBS+Studio+de+una+captura."
         },
         {
           "id": "h-09",
@@ -358,7 +340,8 @@
           "descripcion": "El análisis de bases de datos locales recupera las conversaciones de Telegram sobre pagos en criptomonedas y el historial de navegación de Firefox de accesos sin KYC.",
           "hallazgo": "SQLite Browser con los registros de Telegram e historial de Firefox con accesos a exchanges sin KYC",
           "criticidad": "ALTA",
-          "imagen": "/assets/autopsy-axiom.png"
+          "imagen": "/assets/autopsy-axiom.png",
+          "link": "https://tvgimenez02.atlassian.net/wiki/spaces/1234/pages/30834740/H-09+An+lisis+de+bases+de+datos+SQLite"
         }
       ]
     },

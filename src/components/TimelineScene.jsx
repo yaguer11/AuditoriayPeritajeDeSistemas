@@ -4,7 +4,10 @@ import { CameraControls, Line, Stars, Grid } from "@react-three/drei";
 import * as THREE from "three";
 import useTimelineData from "../hooks/useTimelineData.js";
 import TimelineNode from "./TimelineNode.jsx";
-import InvestigationBoard, { computeBoardLayout, computeRoomDims } from "./InvestigationBoard.jsx";
+import InvestigationBoard, {
+  computeBoardLayout,
+  computeRoomDims,
+} from "./InvestigationBoard.jsx";
 
 /**
  * TimelineScene
@@ -27,14 +30,18 @@ function SceneContent({
   const activeEvento = useMemo(() => {
     return (
       eventos.find((ev) => ev.id === activeId) ||
-      (timeline.evidencias && timeline.evidencias.find((ev) => ev.id === activeId))
+      (timeline.evidencias &&
+        timeline.evidencias.find((ev) => ev.id === activeId))
     );
   }, [eventos, timeline.evidencias, activeId]);
 
   /* Layout del tablero (posiciones, tipo de tarjeta, dimensiones) */
   const { boardEventos, boardW, boardH } = useMemo(
-    () => computeBoardLayout((isBoardActive && timeline.evidencias) ? timeline.evidencias : eventos),
-    [eventos, timeline.evidencias, isBoardActive]
+    () =>
+      computeBoardLayout(
+        isBoardActive && timeline.evidencias ? timeline.evidencias : eventos,
+      ),
+    [eventos, timeline.evidencias, isBoardActive],
   );
 
   /* Tema de la vista clásica */
@@ -42,16 +49,24 @@ function SceneContent({
     () =>
       timelineId === "auditoria"
         ? {
-            background: "#142b4d", fog: "#142b4d",
-            gridCell: "#16243a", gridSection: "#24406a",
-            ambient: 0.65, directional: 1.4, point: 0.9,
+            background: "#142b4d",
+            fog: "#142b4d",
+            gridCell: "#16243a",
+            gridSection: "#24406a",
+            ambient: 0.65,
+            directional: 1.4,
+            point: 0.9,
           }
         : {
-            background: "#1b3146", fog: "#1b3146",
-            gridCell: "#182537", gridSection: "#2b5874",
-            ambient: 0.55, directional: 1.25, point: 0.8,
+            background: "#1b3146",
+            fog: "#1b3146",
+            gridCell: "#182537",
+            gridSection: "#2b5874",
+            ambient: 0.55,
+            directional: 1.25,
+            point: 0.8,
           },
-    [timelineId]
+    [timelineId],
   );
 
   /* Navegación y cámara */
@@ -64,26 +79,31 @@ function SceneContent({
     (evento) => {
       setActiveId(evento.id);
       const isEvid = evento.id.startsWith("h-");
-      const f = evento.fase.toUpperCase();
-      const isFaseIVNode = isEvid || f.includes("IV") || f.includes("4");
+      const isLauncher = evento.isRoomLauncher || evento.id === "per-lab";
 
-      if (timelineId === "peritaje" && isFaseIVNode) {
-        setIsBoardActive(true); // Activa la vista tablero solo en peritaje
+      if (timelineId === "peritaje" && (isEvid || isLauncher)) {
+        setIsBoardActive(true); // Activa el cuarto de investigación
         const matched = boardEventos.find((be) => be.id === evento.id);
         if (matched) {
           const p = matched.boardPosition;
-          controlsRef.current?.setLookAt(p.x, p.y, 4.3, p.x, p.y, 0, true); // Cerca pero permitiendo ver el entorno
+          controlsRef.current?.setLookAt(p.x, p.y, 4.3, p.x, p.y, 0, true);
+        } else {
+          controlsRef.current?.setLookAt(0, 1.0, DEF_Z, 0, -0.4, 0, true);
         }
       } else {
         const p = evento.position;
         controlsRef.current?.setLookAt(
-          p.x + 1.5, p.y + 1.2, p.z + 6.5,
-          p.x, p.y + 0.6, p.z,
-          true
+          p.x + 1.5,
+          p.y + 1.2,
+          p.z + 6.5,
+          p.x,
+          p.y + 0.6,
+          p.z,
+          true,
         );
       }
     },
-    [boardEventos, setActiveId, setIsBoardActive, timelineId]
+    [boardEventos, DEF_Z, setActiveId, setIsBoardActive, timelineId],
   );
 
   const clearFocus = useCallback(() => {
@@ -121,7 +141,11 @@ function SceneContent({
       const d = computeRoomDims(boardW, boardH);
       const box = new THREE.Box3(
         new THREE.Vector3(-d.ROOM_HALF_W + 0.7, d.FLOOR_Y + 0.7, 0.5),
-        new THREE.Vector3(d.ROOM_HALF_W - 0.7, d.CEILING_Y - 0.7, d.ROOM_D - 2.8)
+        new THREE.Vector3(
+          d.ROOM_HALF_W - 0.7,
+          d.CEILING_Y - 0.7,
+          d.ROOM_D - 2.8,
+        ),
       );
       c.setBoundary(box);
       c.boundaryEnclosesCamera = true;
@@ -150,7 +174,11 @@ function SceneContent({
     <>
       {isBoardActive ? (
         /* ════ VISTA A: Tablero de investigación ════ */
-        <InvestigationBoard boardW={boardW} boardH={boardH} boardEventos={boardEventos} />
+        <InvestigationBoard
+          boardW={boardW}
+          boardH={boardH}
+          boardEventos={boardEventos}
+        />
       ) : (
         /* ════ VISTA B: Escenario 3D digital clásico ════ */
         <>
@@ -158,16 +186,48 @@ function SceneContent({
           <fog attach="fog" args={[classicTheme.fog, 25, 70]} />
 
           <ambientLight intensity={classicTheme.ambient} />
-          <directionalLight position={[10, 12, 8]} intensity={classicTheme.directional} />
-          <pointLight position={[0, 8, 0]} intensity={classicTheme.point} color={timeline.colorPrimario} />
+          <directionalLight
+            position={[10, 12, 8]}
+            intensity={classicTheme.directional}
+          />
+          <pointLight
+            position={[0, 8, 0]}
+            intensity={classicTheme.point}
+            color={timeline.colorPrimario}
+          />
 
-          <Stars radius={90} depth={40} count={2500} factor={3} saturation={0} fade speed={0.6} />
-          <Grid position={[0, -4, 0]} args={[80, 80]} cellColor={classicTheme.gridCell}
-            sectionColor={classicTheme.gridSection} fadeDistance={55} infiniteGrid />
+          <Stars
+            radius={90}
+            depth={40}
+            count={2500}
+            factor={3}
+            saturation={0}
+            fade
+            speed={0.6}
+          />
+          <Grid
+            position={[0, -4, 0]}
+            args={[80, 80]}
+            cellColor={classicTheme.gridCell}
+            sectionColor={classicTheme.gridSection}
+            fadeDistance={55}
+            infiniteGrid
+          />
 
-          <Line points={curvePoints} color={timeline.colorPrimario} lineWidth={2.5} transparent opacity={0.85} />
-          <Line points={curvePoints.map((p) => [p.x, p.y - 0.06, p.z])} color={timeline.colorAcento}
-            lineWidth={1} transparent opacity={0.25} />
+          <Line
+            points={curvePoints}
+            color={timeline.colorPrimario}
+            lineWidth={2.5}
+            transparent
+            opacity={0.85}
+          />
+          <Line
+            points={curvePoints.map((p) => [p.x, p.y - 0.06, p.z])}
+            color={timeline.colorAcento}
+            lineWidth={1}
+            transparent
+            opacity={0.25}
+          />
         </>
       )}
 
@@ -181,6 +241,10 @@ function SceneContent({
           isActive={activeId === evento.id}
           onSelect={focusOn}
           onClose={clearFocus}
+          onEnterRoom={() => {
+            setIsBoardActive(true);
+            controlsRef.current?.setLookAt(0, 1.0, DEF_Z, 0, -0.4, 0, true);
+          }}
           isBoardView={isBoardActive}
         />
       ))}

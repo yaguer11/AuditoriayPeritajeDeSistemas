@@ -385,7 +385,7 @@
             "Matriz de alcance"
           ],
           "descripcion": "Definición de objetivos y alcance funcional de la auditoría: Control 8.5 (Autenticación Segura) y Control 8.23 (Filtrado Web) de ISO 27002:2022. Se realizan entrevistas iniciales con los equipos de Infraestructura y SecOps de Despegar para relevar la arquitectura declarada.",
-          "hallazgo": "Alcance formalizado: controles 8.5 y 8.23, enfoque de caja negra",
+          "link": "Alcance formalizado: controles 8.5 y 8.23, enfoque de caja negra",
           "linkLabel": "Alcance formalizado",
           "linkUrl": "https://tvgimenez02.atlassian.net/wiki/spaces/AD/pages/31064130/Definici+n+del+Alcance+de+la+Auditor+a?atlOrigin=eyJpIjoiZmUxN2ZmNjM5NmZjNGVkM2EyNjA5ZDFjMGQ2ODJjMjQiLCJwIjoiYyJ9",
           "criticidad": "INFO",
@@ -408,6 +408,7 @@
           ],
           "descripcion": "Análisis exhaustivo de las políticas internas POL-SEC-102 (Política de Accesos) y POL-SEC-823 (Filtrado Web y Uso Aceptable de Internet), y de los procedimientos PR-SEC-805 (Autenticación) y PR-SEC-823 (Filtrado Web Corporativo), contrastando lo declarado contra los requisitos de la norma.",
           "hallazgo": "Documentación formalmente completa; implementación a verificar en campo",
+          "linkUrl": "https://tvgimenez02.atlassian.net/wiki/x/BIDrAQ",
           "criticidad": "INFO",
           "imagen": "/assets/documentar.png"
         },
@@ -427,6 +428,7 @@
           ],
           "descripcion": "Diseño de las pruebas funcionales de caja negra: casos de prueba de autenticación, análisis de cabeceras HTTP de respuesta y configuración del entorno de herramientas para la evaluación de los controles 8.5 y 8.23 sin acceso al código fuente.",
           "hallazgo": "Plan de pruebas aprobado — 3 baterías técnicas definidas",
+          "linkUrl": "https://tvgimenez02.atlassian.net/wiki/x/O4DrAQ",
           "criticidad": "INFO",
           "imagen": "/assets/planificacion-actividades.jpg"
         },
@@ -445,6 +447,7 @@
           ],
           "descripcion": "Ejecución de pruebas de autenticación: se inyectan 10 intentos fallidos de login consecutivos y el sistema NO ejecuta el bloqueo temporal de cuenta esperado según PR-SEC-805. Se comprueba la No Conformidad NC-01, de severidad CRÍTICA, que habilita ataques de fuerza bruta.",
           "hallazgo": "NC-01 (CRÍTICA): sin bloqueo tras 10 intentos fallidos de login",
+          "linkUrl": "https://tvgimenez02.atlassian.net/wiki/x/BwD7AQ",
           "criticidad": "CRÍTICA",
           "imagen": "/assets/prueba-login.jpg"
         },
@@ -463,6 +466,7 @@
           ],
           "descripcion": "Inspección del token JWT y de la gestión de sesiones mediante las DevTools del navegador. Se detecta configuración deficiente: las cookies críticas de sesión carecen de los atributos HttpOnly y SameSite=Lax, quedando expuestas a robo vía XSS y a ataques CSRF. Se registra la No Conformidad NC-03.",
           "hallazgo": "NC-03: cookies de sesión sin HttpOnly ni SameSite=Lax",
+          "linkUrl": "https://tvgimenez02.atlassian.net/wiki/x/RADsAQ",
           "criticidad": "ALTA",
           "imagen": "/assets/dev-tools.jpg"
         },
@@ -482,6 +486,7 @@
           ],
           "descripcion": "Revisión observacional de la infraestructura de filtrado web. Se detecta una brecha en la arquitectura VPN configurada con split tunneling: el tráfico de los endpoints remotos sale directo a Internet sin pasar por la inspección de FortiProxy. Se registra la No Conformidad NC-05.",
           "hallazgo": "NC-05: split tunneling deja endpoints remotos sin inspección de FortiProxy",
+          "linkUrl": "https://tvgimenez02.atlassian.net/wiki/x/QwDqAQ",
           "criticidad": "ALTA",
           "imagen": "/assets/vpn-split-tunneling.jpg"
         },
@@ -501,6 +506,7 @@
           ],
           "descripcion": "Evaluación de los resultados técnicos frente a los criterios de ISO 27002:2022. Se clasifican 7 No Conformidades en total, ponderadas por severidad e impacto — por ejemplo, la ausencia de MFA se clasifica como riesgo ALTO. Cada NC se vincula con su evidencia objetiva.",
           "hallazgo": "7 No Conformidades clasificadas (ausencia de MFA → riesgo ALTO)",
+          "linkUrl": "https://tvgimenez02.atlassian.net/wiki/x/HYDpAQ",
           "criticidad": "ALTA",
           "imagen": "/assets/analisisevidencias.jpg"
         },
@@ -520,12 +526,14 @@
           ],
           "descripcion": "Redacción del Informe Final de Auditoría: conclusiones por control, valoración del nivel de madurez de la seguridad de Despegar y estructuración del plan de recomendaciones priorizadas por criticidad, esfuerzo y quick wins.",
           "hallazgo": "Informe final emitido con plan de recomendaciones priorizado",
+          "linkUrl": "https://tvgimenez02.atlassian.net/wiki/x/BIDkAQ",
           "criticidad": "MEDIA",
           "imagen": "/assets/informe-final.jpg"
         },
         {
           "id": "aud-09",
           "icono": "tick",
+          "linkUrl": "https://tvgimenez02.atlassian.net/wiki/x/DADsAQ",
           "fase": "CIERRE",
           "subtitle": "Respuesta de la organización — PAC",
           "titulo": "Respuesta de la organización — PAC",

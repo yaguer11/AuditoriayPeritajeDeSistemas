@@ -252,7 +252,7 @@
           "hallazgo": "Volatility 3 malfind mostrando las regiones RWX en svchost.exe y clipboard dump",
           "criticidad": "CRÍTICA",
           "imagen": "/assets/volatility-ram.png",
-          "link": "https://tvgimenez02.atlassian.net/wiki/spaces/1234/pages/1572891/7.1+Clasificaci+n+de+la+Evidencia+por+Volatilidad"
+          "link": "https://tvgimenez02.atlassian.net/wiki/x/CICAAg"
         },
         {
           "id": "h-04",
@@ -391,7 +391,7 @@
             "PR-SEC-823"
           ],
           "descripcion": "Análisis exhaustivo de las políticas internas POL-SEC-102 (Política de Accesos) y POL-SEC-823 (Filtrado Web y Uso Aceptable de Internet), y de los procedimientos PR-SEC-805 (Autenticación) y PR-SEC-823 (Filtrado Web Corporativo), contrastando lo declarado contra los requisitos de la norma.",
-          "hallazgo": "Documentación formalmente completa; implementación a verificar en campo",
+          "hallazgo": "Documentación",
           "linkUrl": "https://tvgimenez02.atlassian.net/wiki/x/BIDrAQ",
           "criticidad": "INFO",
           "imagen": "/assets/documentar.png"
@@ -411,7 +411,7 @@
             "Analizador de cabeceras HTTP"
           ],
           "descripcion": "Diseño de las pruebas funcionales de caja negra: casos de prueba de autenticación, análisis de cabeceras HTTP de respuesta y configuración del entorno de herramientas para la evaluación de los controles 8.5 y 8.23 sin acceso al código fuente.",
-          "hallazgo": "Plan de pruebas aprobado — 3 baterías técnicas definidas",
+          "hallazgo": "Plan de pruebas aprobado",
           "linkUrl": "https://tvgimenez02.atlassian.net/wiki/x/O4DrAQ",
           "criticidad": "INFO",
           "imagen": "/assets/planificacion-actividades.jpg"
@@ -430,38 +430,19 @@
             "Control 8.5 ISO 27002"
           ],
           "descripcion": "Ejecución de pruebas de autenticación: se inyectan 10 intentos fallidos de login consecutivos y el sistema NO ejecuta el bloqueo temporal de cuenta esperado según PR-SEC-805. Se comprueba la No Conformidad NC-01, de severidad CRÍTICA, que habilita ataques de fuerza bruta.",
-          "hallazgo": "NC-01 (CRÍTICA): sin bloqueo tras 10 intentos fallidos de login",
+          "hallazgo": "Ejecución de pruebas",
           "linkUrl": "https://tvgimenez02.atlassian.net/wiki/x/BwD7AQ",
           "criticidad": "CRÍTICA",
           "imagen": "/assets/prueba-login.jpg"
         },
         {
-          "id": "aud-05",
-          "icono": "tool",
-          "fase": "FASE 4",
-          "subtitle": "Prueba Técnica 2 — JWT y gestión de sesiones",
-          "titulo": "Prueba Técnica 2 — JWT y gestión de sesiones",
-          "fecha": "28/04/2026",
-          "hora": "Prueba Técnica 2",
-          "responsable": "Germán Muñoz",
-          "herramientas": [
-            "DevTools (pestaña Application/Network)",
-            "Inspección de cookies"
-          ],
-          "descripcion": "Inspección del token JWT y de la gestión de sesiones mediante las DevTools del navegador. Se detecta configuración deficiente: las cookies críticas de sesión carecen de los atributos HttpOnly y SameSite=Lax, quedando expuestas a robo vía XSS y a ataques CSRF. Se registra la No Conformidad NC-03.",
-          "hallazgo": "NC-03: cookies de sesión sin HttpOnly ni SameSite=Lax",
-          "linkUrl": "https://tvgimenez02.atlassian.net/wiki/x/RADsAQ",
-          "criticidad": "ALTA",
-          "imagen": "/assets/dev-tools.jpg"
-        },
-        {
           "id": "aud-06",
           "icono": "sheild",
           "fase": "FASE 4",
-          "subtitle": "Prueba Técnica 3 — Filtrado web (Control 8.23)",
-          "titulo": "Prueba Técnica 3 — Filtrado web (Control 8.23)",
+          "subtitle": "Prueba Técnica 2 — Filtrado web (Control 8.23)",
+          "titulo": "Prueba Técnica 2 — Filtrado web (Control 8.23)",
           "fecha": "28/04/2026",
-          "hora": "Prueba Técnica 3",
+          "hora": "Prueba Técnica 2",
           "responsable": "Germán Muñoz",
           "herramientas": [
             "Revisión observacional",
@@ -469,7 +450,7 @@
             "Arquitectura VPN"
           ],
           "descripcion": "Revisión observacional de la infraestructura de filtrado web. Se detecta una brecha en la arquitectura VPN configurada con split tunneling: el tráfico de los endpoints remotos sale directo a Internet sin pasar por la inspección de FortiProxy. Se registra la No Conformidad NC-05.",
-          "hallazgo": "NC-05: split tunneling deja endpoints remotos sin inspección de FortiProxy",
+          "hallazgo": "Ejecución de pruebas",
           "linkUrl": "https://tvgimenez02.atlassian.net/wiki/x/QwDqAQ",
           "criticidad": "ALTA",
           "imagen": "/assets/vpn-split-tunneling.jpg"
@@ -489,7 +470,7 @@
             "Cuadro de No Conformidades"
           ],
           "descripcion": "Evaluación de los resultados técnicos frente a los criterios de ISO 27002:2022. Se clasifican 7 No Conformidades en total, ponderadas por severidad e impacto — por ejemplo, la ausencia de MFA se clasifica como riesgo ALTO. Cada NC se vincula con su evidencia objetiva.",
-          "hallazgo": "7 No Conformidades clasificadas (ausencia de MFA → riesgo ALTO)",
+          "hallazgo": "Analisis de evidencias",
           "linkUrl": "https://tvgimenez02.atlassian.net/wiki/x/HYDpAQ",
           "criticidad": "ALTA",
           "imagen": "/assets/analisisevidencias.jpg"
@@ -509,16 +490,16 @@
             "Plan de recomendaciones"
           ],
           "descripcion": "Redacción del Informe Final de Auditoría: conclusiones por control, valoración del nivel de madurez de la seguridad de Despegar y estructuración del plan de recomendaciones priorizadas por criticidad, esfuerzo y quick wins.",
-          "hallazgo": "Informe final emitido con plan de recomendaciones priorizado",
+          "hallazgo": "Informe final",
           "linkUrl": "https://tvgimenez02.atlassian.net/wiki/x/BIDkAQ",
           "criticidad": "MEDIA",
           "imagen": "/assets/informe-final.jpg"
         },
         {
           "id": "aud-09",
-          "icono": "tick",
+          "icono": "file-text",
           "linkUrl": "https://tvgimenez02.atlassian.net/wiki/x/DADsAQ",
-          "fase": "CIERRE",
+          "fase": "PLAN DE ACCIÓN CORRECTIVO",
           "subtitle": "Respuesta de la organización — PAC",
           "titulo": "Respuesta de la organización — PAC",
           "fecha": "08/05/2026",
@@ -526,9 +507,51 @@
           "responsable": "Gerencia de Ciberseguridad de Despegar",
           "herramientas": ["Plan de Acción Correctivo (PAC)"],
           "descripcion": "La Gerencia de Ciberseguridad de Despegar presenta el Plan de Acción Correctivo (PAC) comprometiendo plazos y responsables para remediar los hallazgos: bloqueo de cuentas, endurecimiento de cookies, implementación de MFA y rediseño de la arquitectura VPN (full tunneling).",
-          "hallazgo": "PAC presentado — compromiso de remediación de las 7 NC",
+          "hallazgo": "Plan de acción",
           "criticidad": "INFO",
           "imagen": "/assets/plan-accion.jpg"
+        },
+        {
+          "id": "aud-10",
+          "icono": "file-text",
+          "fase": "APROBACIÓN PLAN",
+          "subtitle": "Aprobación del Plan de Acción Correctivo",
+          "titulo": "Aprobación del Plan de Acción Correctivo",
+          "fecha": "15/05/2026",
+          "hora": "Revisión documental",
+          "responsable": "Equipo auditor",
+          "herramientas": [
+            "Informe Final de Auditoría",
+            "Plan de Acción Correctivo",
+            "Cronograma Consolidado",
+            "Mecanismo de Seguimiento"
+          ],
+          "descripcion": "Revisión y aprobación formal del Plan de Acción Correctivo presentado por Despegar S.A., verificando la correspondencia entre las no conformidades detectadas, las acciones comprometidas, los responsables asignados, los plazos de implementación y los mecanismos de seguimiento previstos para su posterior verificación.",
+          "hallazgo": "Plan de Acción Correctivo aprobado",
+          "linkUrl": "https://tvgimenez02.atlassian.net/wiki/x/AYBsAg",
+          "criticidad": "INFO",
+          "imagen": "/assets/plan-accion.jpg"
+        },
+        {
+          "id": "aud-11",
+          "icono": "tick",
+          "fase": "CIERRE",
+          "subtitle": "Auditoría de Seguimiento y cierre de no conformidades",
+          "titulo": "Auditoría de Seguimiento y cierre de no conformidades",
+          "fecha": "20/08/2026",
+          "hora": "Verificación final",
+          "responsable": "Equipo auditor",
+          "herramientas": [
+            "Revisión documental",
+            "Entrevistas",
+            "Pruebas funcionales",
+            "Validación de evidencias"
+          ],
+          "descripcion": "Auditoría de seguimiento orientada a comprobar la implementación efectiva de las acciones correctivas aprobadas y determinar el cierre formal de las siete no conformidades. La verificación confirma que las medidas adoptadas son eficaces, que las evidencias aportadas respaldan su ejecución y que no permanecen hallazgos abiertos asociados a los controles 8.5 y 8.23.",
+          "hallazgo": "No conformidades cerradas",
+          "linkUrl": "https://tvgimenez02.atlassian.net/wiki/x/AYB3Ag",
+          "criticidad": "INFO",
+          "imagen": "/assets/analisisevidencias.jpg"
         }
       ]
     }

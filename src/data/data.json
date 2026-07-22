@@ -49,7 +49,8 @@
           "hallazgo": "EV-001 encendida transmitiendo señal HLS — evidencia volátil en riesgo",
           "criticidad": "ALTA",
           "imagen": "/assets/escena-allanamiento.png",
-          "linkUrl": "https://tvgimenez02.atlassian.net/wiki/spaces/1234/pages/1277972/FASE+II+LLEGADA+Y+ASEGURAMIENTO+DE+LA+ESCENA"
+          "linkUrl": "https://tvgimenez02.atlassian.net/wiki/spaces/1234/pages/1277972/FASE+II+LLEGADA+Y+ASEGURAMIENTO+DE+LA+ESCENA",
+          "isCrimeSceneLauncher": true
         },
         {
           "id": "per-02",

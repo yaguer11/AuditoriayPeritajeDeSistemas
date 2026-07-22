@@ -8,32 +8,28 @@ import InvestigationBoard, {
   computeBoardLayout,
   computeRoomDims,
 } from "./InvestigationBoard.jsx";
+import CrimeSceneRoom from "./CrimeSceneRoom.jsx";
 
 /**
- * TimelineScene
- * -------------
- * Orquesta las dos vistas:
- *  - Vista A (isBoardActive = true): tablero de investigación → <InvestigationBoard>
- *  - Vista B (resto): escenario 3D digital clásico (spline, estrellas, grilla)
+ * SceneContent
+ * ------------
+ * Orquesta las tres vistas 3D:
+ *  1. 'digital': Escenario 3D digital clásico (spline, estrellas, grilla)
+ *  2. 'board': Tablero/Cuarto de Investigación de FASE VI (evidencias h-XX)
+ *  3. 'crimeScene': Recreación 3D de la Escena del Allanamiento / Workstation EV-001 (FASE II)
  */
 function SceneContent({
   timelineId,
   activeId,
   setActiveId,
-  isBoardActive,
-  setIsBoardActive,
+  viewMode,
+  setViewMode,
 }) {
   const { timeline, eventos, curvePoints } = useTimelineData(timelineId);
   const controlsRef = useRef();
 
-  // ¿El hito activo pertenece a la FASE IV / FASE 4 o es una evidencia de laboratorio (ID h-XX)?
-  const activeEvento = useMemo(() => {
-    return (
-      eventos.find((ev) => ev.id === activeId) ||
-      (timeline.evidencias &&
-        timeline.evidencias.find((ev) => ev.id === activeId))
-    );
-  }, [eventos, timeline.evidencias, activeId]);
+  const isBoardActive = viewMode === "board";
+  const isCrimeSceneActive = viewMode === "crimeScene";
 
   /* Layout del tablero (posiciones, tipo de tarjeta, dimensiones) */
   const { boardEventos, boardW, boardH } = useMemo(
@@ -79,10 +75,15 @@ function SceneContent({
     (evento) => {
       setActiveId(evento.id);
       const isEvid = evento.id.startsWith("h-");
-      const isLauncher = evento.isRoomLauncher || evento.id === "per-lab";
+      const isLabLauncher = evento.isRoomLauncher || evento.id === "per-lab";
+      const isCrimeLauncher =
+        evento.isCrimeSceneLauncher || evento.id === "per-01";
 
-      if (timelineId === "peritaje" && (isEvid || isLauncher)) {
-        setIsBoardActive(true); // Activa el cuarto de investigación
+      if (timelineId === "peritaje" && isCrimeLauncher) {
+        setViewMode("crimeScene");
+        controlsRef.current?.setLookAt(0, 2.3, 2.8, 0, 1.6, -1.8, true);
+      } else if (timelineId === "peritaje" && (isEvid || isLabLauncher)) {
+        setViewMode("board");
         const matched = boardEventos.find((be) => be.id === evento.id);
         if (matched) {
           const p = matched.boardPosition;
@@ -91,49 +92,52 @@ function SceneContent({
           controlsRef.current?.setLookAt(0, 1.0, DEF_Z, 0, -0.4, 0, true);
         }
       } else {
+        setViewMode("digital");
         const p = evento.position;
-        controlsRef.current?.setLookAt(
-          p.x + 1.5,
-          p.y + 1.2,
-          p.z + 6.5,
-          p.x,
-          p.y + 0.6,
-          p.z,
-          true,
-        );
+        if (p) {
+          controlsRef.current?.setLookAt(
+            p.x + 1.5,
+            p.y + 1.2,
+            p.z + 6.5,
+            p.x,
+            p.y + 0.6,
+            p.z,
+            true,
+          );
+        }
       }
     },
-    [boardEventos, DEF_Z, setActiveId, setIsBoardActive, timelineId],
+    [boardEventos, DEF_Z, setActiveId, setViewMode, timelineId],
   );
 
   const clearFocus = useCallback(() => {
     setActiveId(null);
-    if (isBoardActive) {
-      // Si el tablero está activo, al cerrar la tarjeta volvemos a la vista general de la oficina
+    if (viewMode === "board") {
       controlsRef.current?.setLookAt(0, 1.0, DEF_Z, 0, -0.4, 0, true);
+    } else if (viewMode === "crimeScene") {
+      controlsRef.current?.setLookAt(0, 2.3, 2.8, 0, 1.6, -1.8, true);
     } else {
-      // Si estamos en modo clásico, volvemos a la vista general clásica
       controlsRef.current?.setLookAt(0, 6, 26, 0, 0, 0, true);
     }
-  }, [isBoardActive, DEF_Z, setActiveId]);
+  }, [viewMode, DEF_Z, setActiveId]);
 
   // Al cambiar de timeline o salir, resetear cámara
   useEffect(() => {
     setActiveId(null);
-    setIsBoardActive(false);
+    setViewMode("digital");
     controlsRef.current?.setLookAt(0, 6, 26, 0, 0, 0, false);
-  }, [timelineId, setActiveId, setIsBoardActive]);
+  }, [timelineId, setActiveId, setViewMode]);
 
-  // Efecto para volar de vuelta a la vista clásica al desactivar el tablero
-  const prevBoardActive = useRef(isBoardActive);
+  // Transición de cámara según modo de vista
   useEffect(() => {
-    if (prevBoardActive.current && !isBoardActive) {
-      controlsRef.current?.setLookAt(0, 6, 26, 0, 0, 0, true);
+    if (viewMode === "crimeScene") {
+      controlsRef.current?.setLookAt(0, 2.3, 2.8, 0, 1.6, -1.8, true);
+    } else if (viewMode === "board") {
+      controlsRef.current?.setLookAt(0, 1.0, DEF_Z, 0, -0.4, 0, true);
     }
-    prevBoardActive.current = isBoardActive;
-  }, [isBoardActive]);
+  }, [viewMode, DEF_Z]);
 
-  /* Límite de cámara: en la vista tablero la cámara queda encerrada; en la clásica, libre. */
+  /* Límite de cámara */
   useEffect(() => {
     const c = controlsRef.current;
     if (!c) return;
@@ -149,15 +153,23 @@ function SceneContent({
       );
       c.setBoundary(box);
       c.boundaryEnclosesCamera = true;
+    } else if (isCrimeSceneActive) {
+      const box = new THREE.Box3(
+        new THREE.Vector3(-6, -1, 1),
+        new THREE.Vector3(6, 6, 12),
+      );
+      c.setBoundary(box);
+      c.boundaryEnclosesCamera = true;
     } else {
       c.setBoundary(undefined);
       c.boundaryEnclosesCamera = false;
     }
-  }, [isBoardActive, boardW, boardH]);
+  }, [isBoardActive, isCrimeSceneActive, boardW, boardH]);
 
   useEffect(() => {
     const onKey = (e) => {
       if (e.key === "Escape") return clearFocus();
+      if (viewMode !== "board") return;
       if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
       const idx = boardEventos.findIndex((ev) => ev.id === activeId);
       const next =
@@ -168,16 +180,40 @@ function SceneContent({
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [activeId, boardEventos, focusOn, clearFocus]);
+  }, [activeId, boardEventos, focusOn, clearFocus, viewMode]);
 
   return (
     <>
       {isBoardActive ? (
-        /* ════ VISTA A: Tablero de investigación ════ */
+        /* ════ VISTA A: Tablero / Cuarto de Investigación (FASE VI) ════ */
         <InvestigationBoard
           boardW={boardW}
           boardH={boardH}
           boardEventos={boardEventos}
+        />
+      ) : isCrimeSceneActive ? (
+        /* ════ VISTA C: Escena del Allanamiento 3D (EV-001 - FASE II) ════ */
+        <CrimeSceneRoom
+          onFocusHotspot={() => {
+            const ev01 = eventos.find((e) => e.id === "per-01");
+            if (ev01) setActiveId(ev01.id);
+          }}
+          onFocusEvidence={(targetPos) => {
+            if (controlsRef.current && targetPos) {
+              controlsRef.current.setLookAt(
+                targetPos.x,
+                targetPos.y + 0.15,
+                targetPos.z + 3.4,
+                targetPos.x,
+                targetPos.y,
+                targetPos.z,
+                true,
+              );
+            }
+          }}
+          onResetCamera={() => {
+            controlsRef.current?.setLookAt(0, 2.3, 2.8, 0, 1.6, -1.8, true);
+          }}
         />
       ) : (
         /* ════ VISTA B: Escenario 3D digital clásico ════ */
@@ -232,26 +268,45 @@ function SceneContent({
       )}
 
       {/* Nodos (tarjetas del tablero o esferas clásicas según la vista) */}
-      {boardEventos.map((evento) => (
+      {!isCrimeSceneActive &&
+        boardEventos.map((evento) => (
+          <TimelineNode
+            key={evento.id}
+            evento={evento}
+            color={timeline.colorPrimario}
+            accent={timeline.colorAcento}
+            isActive={activeId === evento.id}
+            onSelect={focusOn}
+            onClose={clearFocus}
+            onEnterRoom={() => {
+              setViewMode("board");
+              controlsRef.current?.setLookAt(0, 1.0, DEF_Z, 0, -0.4, 0, true);
+            }}
+            onEnterCrimeScene={() => {
+              setViewMode("crimeScene");
+              controlsRef.current?.setLookAt(0, 1.8, 5.2, 0, 1.1, 0, true);
+            }}
+            isBoardView={isBoardActive}
+          />
+        ))}
+
+      {/* Si estamos en la escena del allanamiento y se selecciona per-01, renderizamos la InfoCard de FASE II */}
+      {isCrimeSceneActive && activeId === "per-01" && (
         <TimelineNode
-          key={evento.id}
-          evento={evento}
+          evento={eventos.find((e) => e.id === "per-01")}
           color={timeline.colorPrimario}
           accent={timeline.colorAcento}
-          isActive={activeId === evento.id}
-          onSelect={focusOn}
-          onClose={clearFocus}
-          onEnterRoom={() => {
-            setIsBoardActive(true);
-            controlsRef.current?.setLookAt(0, 1.0, DEF_Z, 0, -0.4, 0, true);
-          }}
-          isBoardView={isBoardActive}
+          isActive={true}
+          onSelect={() => {}}
+          onClose={() => setActiveId(null)}
+          onEnterCrimeScene={() => {}}
+          isBoardView={false}
         />
-      ))}
+      )}
 
       <CameraControls
         ref={controlsRef}
-        minDistance={2.5}
+        minDistance={2.0}
         maxDistance={45}
         maxPolarAngle={Math.PI * 0.55}
         smoothTime={0.45}
@@ -262,11 +317,11 @@ function SceneContent({
 
 export default function TimelineScene({ timelineId }) {
   const [activeId, setActiveId] = useState(null);
-  const [isBoardActive, setIsBoardActive] = useState(false);
+  const [viewMode, setViewMode] = useState("digital"); // 'digital' | 'board' | 'crimeScene'
 
   const handleGoBack = () => {
     setActiveId(null);
-    setIsBoardActive(false);
+    setViewMode("digital");
   };
 
   return (
@@ -281,12 +336,12 @@ export default function TimelineScene({ timelineId }) {
           timelineId={timelineId}
           activeId={activeId}
           setActiveId={setActiveId}
-          isBoardActive={isBoardActive}
-          setIsBoardActive={setIsBoardActive}
+          viewMode={viewMode}
+          setViewMode={setViewMode}
         />
       </Canvas>
 
-      {isBoardActive && (
+      {viewMode !== "digital" && (
         <button className="timeline-scene__back-btn" onClick={handleGoBack}>
           ← Volver al Espacio Digital
         </button>

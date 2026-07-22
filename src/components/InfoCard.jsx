@@ -19,6 +19,7 @@ export default function InfoCard({
   color,
   onClose,
   onEnterRoom,
+  onEnterCrimeScene,
   position = [0, 1.4, 0],
 }) {
   const badge = CRITICIDAD_COLORS[evento.criticidad] ?? "#54a0ff";
@@ -119,6 +120,22 @@ export default function InfoCard({
                 }}
               >
                 🔍 Ingresar al Cuarto de Investigación 3D
+              </button>
+            </div>
+          )}
+
+          {evento.isCrimeSceneLauncher && onEnterCrimeScene && (
+            <div className="info-card__link">
+              <button
+                type="button"
+                className="info-card__link-btn"
+                style={{ borderColor: "#00e5ff", background: "rgba(0, 229, 255, 0.15)" }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEnterCrimeScene();
+                }}
+              >
+                🏠 Explorar Escena del Allanamiento 3D (EV-001)
               </button>
             </div>
           )}

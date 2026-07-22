@@ -93,7 +93,14 @@ export function PushPin({ color = "#d32f2f", position = [0, 0, 0] }) {
  * Renderiza el nodo en 3D original: esfera brillante, anillo orbital,
  * ícono flotante y etiqueta HTML flotante.
  */
-function ClassicTimelineNode({ evento, color, accent, isActive, onSelect, onClose }) {
+function ClassicTimelineNode({
+  evento,
+  color,
+  accent,
+  isActive,
+  onSelect,
+  onClose,
+}) {
   const meshRef = useRef();
   const ringRef = useRef();
   const [hovered, setHovered] = useState(false);
@@ -107,7 +114,7 @@ function ClassicTimelineNode({ evento, color, accent, isActive, onSelect, onClos
       const target = isActive ? 1.5 : hovered ? 1.25 : 1;
       meshRef.current.scale.lerp(
         { x: target, y: target, z: target },
-        Math.min(1, delta * 8)
+        Math.min(1, delta * 8),
       );
     }
   });
@@ -183,13 +190,21 @@ function ClassicTimelineNode({ evento, color, accent, isActive, onSelect, onClos
         >
           <div className="node-label" style={{ "--label-accent": color }}>
             <span className="node-label__fase">{evento.fase}</span>
+            {evento.subtitle && (
+              <span className="node-label__subtitle">{evento.subtitle}</span>
+            )}
             <span className="node-label__fecha">{evento.fecha}</span>
           </div>
         </Html>
       )}
 
       {isActive && (
-        <InfoCard evento={evento} color={accent} onClose={onClose} position={[0, 1.4, 0]} />
+        <InfoCard
+          evento={evento}
+          color={accent}
+          onClose={onClose}
+          position={[0, 1.4, 0]}
+        />
       )}
     </group>
   );
@@ -200,7 +215,14 @@ function ClassicTimelineNode({ evento, color, accent, isActive, onSelect, onClos
  * -----------------
  * Renderiza la tarjeta física (Polaroid, Nota o Documento) en el tablero de investigación.
  */
-function BoardTimelineNode({ evento, color, accent, isActive, onSelect, onClose }) {
+function BoardTimelineNode({
+  evento,
+  color,
+  accent,
+  isActive,
+  onSelect,
+  onClose,
+}) {
   const groupRef = useRef();
   const [hovered, setHovered] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
@@ -248,7 +270,7 @@ function BoardTimelineNode({ evento, color, accent, isActive, onSelect, onClose 
       const s = hovered || isActive ? 1.05 : 1.0;
       groupRef.current.scale.lerp(
         new THREE.Vector3(s, s, s),
-        Math.min(1, delta * 12)
+        Math.min(1, delta * 12),
       );
     }
   });
@@ -399,7 +421,12 @@ function BoardTimelineNode({ evento, color, accent, isActive, onSelect, onClose 
                     />
                   </Suspense>
                 ) : (
-                  <Text font={HANDWRITTEN_FONT} fontSize={0.18} color="#fff" position={[0, 0, 0.002]}>
+                  <Text
+                    font={HANDWRITTEN_FONT}
+                    fontSize={0.18}
+                    color="#fff"
+                    position={[0, 0, 0.002]}
+                  >
                     📋
                   </Text>
                 )}
@@ -488,7 +515,12 @@ function BoardTimelineNode({ evento, color, accent, isActive, onSelect, onClose 
                     />
                   </Suspense>
                 ) : (
-                  <Text font={HANDWRITTEN_FONT} fontSize={0.22} color="#fff" position={[0, 0, 0.002]}>
+                  <Text
+                    font={HANDWRITTEN_FONT}
+                    fontSize={0.22}
+                    color="#fff"
+                    position={[0, 0, 0.002]}
+                  >
                     📁
                   </Text>
                 )}
@@ -537,7 +569,13 @@ function BoardTimelineNode({ evento, color, accent, isActive, onSelect, onClose 
   };
 
   return (
-    <group position={[evento.boardPosition.x, evento.boardPosition.y, evento.boardPosition.z]}>
+    <group
+      position={[
+        evento.boardPosition.x,
+        evento.boardPosition.y,
+        evento.boardPosition.z,
+      ]}
+    >
       <group ref={groupRef} rotation={[0, 0, evento.boardRotationZ]}>
         {renderCardContent()}
       </group>

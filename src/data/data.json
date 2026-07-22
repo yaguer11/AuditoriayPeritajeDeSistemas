@@ -15,7 +15,11 @@
           "fecha": "15/07/2024",
           "hora": "20:14 hs",
           "responsable": "Matías Giménez y Valentín Giménez",
-          "herramientas": ["Registro fotográfico", "Acta de escena", "Perímetro de seguridad"],
+          "herramientas": [
+            "Registro fotográfico",
+            "Acta de escena",
+            "Perímetro de seguridad"
+          ],
           "descripcion": "El equipo pericial arriba al domicilio allanado. El equipo EV-001 (Workstation Dell) se encontró encendido ejecutando procesos de streaming HLS en vivo. Se documenta el estado de la escena, se fotografía cada dispositivo in situ y se asegura el perímetro para evitar la manipulación remota o el apagado intencional de los equipos.",
           "hallazgo": "EV-001 encendida transmitiendo señal HLS — evidencia volátil en riesgo",
           "criticidad": "ALTA",
@@ -57,7 +61,11 @@
           "fecha": "15/07/2024",
           "hora": "21:05 hs",
           "responsable": "Equipo pericial",
-          "herramientas": ["Bolsas antiestáticas", "Cinta tamper-evident", "Precintos numerados"],
+          "herramientas": [
+            "Bolsas antiestáticas",
+            "Cinta tamper-evident",
+            "Precintos numerados"
+          ],
           "descripcion": "Finalizado el triage se realiza el apagado técnico (soft shutdown) de la Workstation EV-001. El equipo se embala en bolsas antiestáticas, se sella con cinta tamper-evident y se precinta con numeración única, dando inicio formal al registro de cadena de custodia.",
           "hallazgo": "EV-001 preservada e ingresada a cadena de custodia",
           "criticidad": "MEDIA",
@@ -71,7 +79,10 @@
           "fecha": "15/07/2024",
           "hora": "21:30 hs",
           "responsable": "Germán Muñoz",
-          "herramientas": ["Guantes antiestáticos", "Kit de destornilladores ESD"],
+          "herramientas": [
+            "Guantes antiestáticos",
+            "Kit de destornilladores ESD"
+          ],
           "descripcion": "Se extrae físicamente el disco NVMe (EV-002) de la workstation utilizando guantes antiestáticos para evitar contaminación por descarga electrostática o pérdida de integridad del medio. El disco se rotula y fotografía antes de su adquisición.",
           "hallazgo": "Disco NVMe EV-002 extraído sin daños",
           "criticidad": "ALTA",
@@ -85,7 +96,10 @@
           "fecha": "15/07/2024",
           "hora": "21:45 hs",
           "responsable": "Germán Muñoz",
-          "herramientas": ["FTK Imager", "Bloqueador de escritura Tableau T35689iu"],
+          "herramientas": [
+            "FTK Imager",
+            "Bloqueador de escritura Tableau T35689iu"
+          ],
           "descripcion": "Se genera la imagen forense bit a bit del disco EV-002 en formato .E01 (Expert Witness Format) utilizando FTK Imager, con el disco conectado a través del bloqueador de escritura por hardware Tableau T35689iu, garantizando que ningún byte del original pueda ser modificado durante la adquisición.",
           "hallazgo": "Imagen .E01 completa — original intacto gracias al write-blocker",
           "criticidad": "CRÍTICA",
@@ -113,7 +127,10 @@
           "fecha": "16/07/2024",
           "hora": "10:00 hs",
           "responsable": "Germán Muñoz",
-          "herramientas": ["Volatility 3", "plugins pslist / malfind / clipboard"],
+          "herramientas": [
+            "Volatility 3",
+            "plugins pslist / malfind / clipboard"
+          ],
           "descripcion": "En laboratorio se analiza el volcado de RAM con Volatility 3. Se detecta una técnica de Process Hollowing sobre svchost.exe (PID 1337), utilizada para ocultar el proceso de captura y retransmisión. Además se extrae del portapapeles la seed phrase de una billetera de criptomonedas.",
           "hallazgo": "Process Hollowing en svchost.exe (PID 1337) + seed phrase recuperada",
           "criticidad": "CRÍTICA",
@@ -169,7 +186,11 @@
           "fecha": "Fase de Laboratorio",
           "hora": "—",
           "responsable": "Equipo de laboratorio",
-          "herramientas": ["ExifTool", "Explorador blockchain", "OBS Studio (artefactos)"],
+          "herramientas": [
+            "ExifTool",
+            "Explorador blockchain",
+            "OBS Studio (artefactos)"
+          ],
           "descripcion": "Con ExifTool se extraen fechas de creación ocultas en capturas de pantalla de OBS Studio, que ubican temporalmente la actividad de streaming. El análisis on-chain traza USD 87.400 distribuidos en 156 transacciones de la red Bitcoin vinculadas a la wallet recuperada.",
           "hallazgo": "USD 87.400 en 156 transacciones BTC trazadas a la wallet del imputado",
           "criticidad": "CRÍTICA",
@@ -350,12 +371,17 @@
         {
           "id": "aud-01",
           "icono": "flag",
-          "fase": "FASE 1: Inicio de la auditoría",
+          "fase": "FASE 1",
+          "subtitle": "Inicio de la auditoría",
           "titulo": "Inicio de la auditoría",
           "fecha": "14/04/2026 – 15/04/2026",
           "hora": "Jornada completa",
           "responsable": "Matías Giménez",
-          "herramientas": ["Carta de compromiso", "Entrevistas", "Matriz de alcance"],
+          "herramientas": [
+            "Carta de compromiso",
+            "Entrevistas",
+            "Matriz de alcance"
+          ],
           "descripcion": "Definición de objetivos y alcance funcional de la auditoría: Control 8.5 (Autenticación Segura) y Control 8.23 (Filtrado Web) de ISO 27002:2022. Se realizan entrevistas iniciales con los equipos de Infraestructura y SecOps de Despegar para relevar la arquitectura declarada.",
           "hallazgo": "Alcance formalizado: controles 8.5 y 8.23, enfoque de caja negra",
           "criticidad": "INFO",
@@ -364,12 +390,18 @@
         {
           "id": "aud-02",
           "icono": "notebook",
-          "fase": "FASE 2: Revisión documental",
+          "fase": "FASE 2",
+          "subtitle": "Revisión documental",
           "titulo": "Revisión documental",
           "fecha": "16/04/2026 – 19/04/2026",
           "hora": "Jornada completa",
           "responsable": "Valentín Giménez",
-          "herramientas": ["POL-SEC-102", "POL-SEC-823", "PR-SEC-805", "PR-SEC-823"],
+          "herramientas": [
+            "POL-SEC-102",
+            "POL-SEC-823",
+            "PR-SEC-805",
+            "PR-SEC-823"
+          ],
           "descripcion": "Análisis exhaustivo de las políticas internas POL-SEC-102 (Política de Accesos) y POL-SEC-823 (Filtrado Web y Uso Aceptable de Internet), y de los procedimientos PR-SEC-805 (Autenticación) y PR-SEC-823 (Filtrado Web Corporativo), contrastando lo declarado contra los requisitos de la norma.",
           "hallazgo": "Documentación formalmente completa; implementación a verificar en campo",
           "criticidad": "INFO",
@@ -378,12 +410,17 @@
         {
           "id": "aud-03",
           "icono": "calender",
-          "fase": "FASE 3: Planificación de actividades",
+          "subtitle": "Planificación de actividades",
+          "fase": "FASE 3",
           "titulo": "Planificación de actividades",
           "fecha": "20/04/2026 – 22/04/2026",
           "hora": "Jornada completa",
           "responsable": "Matías Giménez y equipo",
-          "herramientas": ["Plan de pruebas", "DevTools", "Analizador de cabeceras HTTP"],
+          "herramientas": [
+            "Plan de pruebas",
+            "DevTools",
+            "Analizador de cabeceras HTTP"
+          ],
           "descripcion": "Diseño de las pruebas funcionales de caja negra: casos de prueba de autenticación, análisis de cabeceras HTTP de respuesta y configuración del entorno de herramientas para la evaluación de los controles 8.5 y 8.23 sin acceso al código fuente.",
           "hallazgo": "Plan de pruebas aprobado — 3 baterías técnicas definidas",
           "criticidad": "INFO",
@@ -392,12 +429,16 @@
         {
           "id": "aud-04",
           "icono": "lock",
-          "fase": "FASE 4: Prueba Técnica 1 — Autenticación (Control 8.5)",
+          "fase": "FASE 4:",
+          "subtitle": "Prueba Técnica 1 — Autenticación (Control 8.5)",
           "titulo": "Prueba Técnica 1 — Autenticación (Control 8.5)",
           "fecha": "28/04/2026",
           "hora": "Prueba Técnica 1",
           "responsable": "Germán Muñoz",
-          "herramientas": ["Pruebas de login automatizadas", "Control 8.5 ISO 27002"],
+          "herramientas": [
+            "Pruebas de login automatizadas",
+            "Control 8.5 ISO 27002"
+          ],
           "descripcion": "Ejecución de pruebas de autenticación: se inyectan 10 intentos fallidos de login consecutivos y el sistema NO ejecuta el bloqueo temporal de cuenta esperado según PR-SEC-805. Se comprueba la No Conformidad NC-01, de severidad CRÍTICA, que habilita ataques de fuerza bruta.",
           "hallazgo": "NC-01 (CRÍTICA): sin bloqueo tras 10 intentos fallidos de login",
           "criticidad": "CRÍTICA",
@@ -406,12 +447,16 @@
         {
           "id": "aud-05",
           "icono": "tool",
-          "fase": "FASE 4: Prueba Técnica 2 — JWT y gestión de sesiones",
+          "fase": "FASE 4",
+          "subtitle": "Prueba Técnica 2 — JWT y gestión de sesiones",
           "titulo": "Prueba Técnica 2 — JWT y gestión de sesiones",
           "fecha": "28/04/2026",
           "hora": "Prueba Técnica 2",
           "responsable": "Germán Muñoz",
-          "herramientas": ["DevTools (pestaña Application/Network)", "Inspección de cookies"],
+          "herramientas": [
+            "DevTools (pestaña Application/Network)",
+            "Inspección de cookies"
+          ],
           "descripcion": "Inspección del token JWT y de la gestión de sesiones mediante las DevTools del navegador. Se detecta configuración deficiente: las cookies críticas de sesión carecen de los atributos HttpOnly y SameSite=Lax, quedando expuestas a robo vía XSS y a ataques CSRF. Se registra la No Conformidad NC-03.",
           "hallazgo": "NC-03: cookies de sesión sin HttpOnly ni SameSite=Lax",
           "criticidad": "ALTA",
@@ -420,12 +465,17 @@
         {
           "id": "aud-06",
           "icono": "sheild",
-          "fase": "FASE 4: Prueba Técnica 3 — Filtrado web (Control 8.23)",
+          "fase": "FASE 4",
+          "subtitle": "Prueba Técnica 3 — Filtrado web (Control 8.23)",
           "titulo": "Prueba Técnica 3 — Filtrado web (Control 8.23)",
           "fecha": "28/04/2026",
           "hora": "Prueba Técnica 3",
           "responsable": "Germán Muñoz",
-          "herramientas": ["Revisión observacional", "FortiProxy", "Arquitectura VPN"],
+          "herramientas": [
+            "Revisión observacional",
+            "FortiProxy",
+            "Arquitectura VPN"
+          ],
           "descripcion": "Revisión observacional de la infraestructura de filtrado web. Se detecta una brecha en la arquitectura VPN configurada con split tunneling: el tráfico de los endpoints remotos sale directo a Internet sin pasar por la inspección de FortiProxy. Se registra la No Conformidad NC-05.",
           "hallazgo": "NC-05: split tunneling deja endpoints remotos sin inspección de FortiProxy",
           "criticidad": "ALTA",
@@ -434,12 +484,17 @@
         {
           "id": "aud-07",
           "icono": "chart",
-          "fase": "FASE 5: Análisis de evidencias",
+          "fase": "FASE 5",
+          "subtitle": "Análisis de evidencias",
           "titulo": "Análisis de evidencias",
           "fecha": "29/04/2026",
           "hora": "Jornada completa",
           "responsable": "Elenio García y equipo",
-          "herramientas": ["ISO 27002:2022", "Matriz de riesgos", "Cuadro de No Conformidades"],
+          "herramientas": [
+            "ISO 27002:2022",
+            "Matriz de riesgos",
+            "Cuadro de No Conformidades"
+          ],
           "descripcion": "Evaluación de los resultados técnicos frente a los criterios de ISO 27002:2022. Se clasifican 7 No Conformidades en total, ponderadas por severidad e impacto — por ejemplo, la ausencia de MFA se clasifica como riesgo ALTO. Cada NC se vincula con su evidencia objetiva.",
           "hallazgo": "7 No Conformidades clasificadas (ausencia de MFA → riesgo ALTO)",
           "criticidad": "ALTA",
@@ -448,12 +503,17 @@
         {
           "id": "aud-08",
           "icono": "file-text",
-          "fase": "FASE 6: Elaboración del Informe Final",
+          "fase": "FASE 6",
+          "subtitle": "Elaboración del Informe Final",
           "titulo": "Elaboración del Informe Final",
           "fecha": "30/04/2026 – 07/05/2026",
           "hora": "Jornada completa",
           "responsable": "Elenio García",
-          "herramientas": ["Informe de auditoría", "Modelo de madurez", "Plan de recomendaciones"],
+          "herramientas": [
+            "Informe de auditoría",
+            "Modelo de madurez",
+            "Plan de recomendaciones"
+          ],
           "descripcion": "Redacción del Informe Final de Auditoría: conclusiones por control, valoración del nivel de madurez de la seguridad de Despegar y estructuración del plan de recomendaciones priorizadas por criticidad, esfuerzo y quick wins.",
           "hallazgo": "Informe final emitido con plan de recomendaciones priorizado",
           "criticidad": "MEDIA",
@@ -463,6 +523,7 @@
           "id": "aud-09",
           "icono": "tick",
           "fase": "CIERRE",
+          "subtitle": "Respuesta de la organización — PAC",
           "titulo": "Respuesta de la organización — PAC",
           "fecha": "08/05/2026",
           "hora": "Presentación formal",

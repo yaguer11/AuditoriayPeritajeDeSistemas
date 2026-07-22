@@ -9,6 +9,7 @@ import InvestigationBoard, {
   computeRoomDims,
 } from "./InvestigationBoard.jsx";
 import CrimeSceneRoom from "./CrimeSceneRoom.jsx";
+import MeetingRoom from "./MeetingRoom.jsx";
 
 /**
  * SceneContent
@@ -30,6 +31,7 @@ function SceneContent({
 
   const isBoardActive = viewMode === "board";
   const isCrimeSceneActive = viewMode === "crimeScene";
+  const isMeetingRoomActive = viewMode === "meetingRoom";
 
   /* Layout del tablero (posiciones, tipo de tarjeta, dimensiones) */
   const { boardEventos, boardW, boardH } = useMemo(
@@ -78,8 +80,13 @@ function SceneContent({
       const isLabLauncher = evento.isRoomLauncher || evento.id === "per-lab";
       const isCrimeLauncher =
         evento.isCrimeSceneLauncher || evento.id === "per-01";
+      const isMeetingLauncher =
+        evento.isMeetingRoomLauncher || evento.id === "aud-08";
 
-      if (timelineId === "peritaje" && isCrimeLauncher) {
+      if (timelineId === "auditoria" && isMeetingLauncher) {
+        setViewMode("meetingRoom");
+        controlsRef.current?.setLookAt(0, 2.4, 5.2, 0, 2.2, -3.9, true);
+      } else if (timelineId === "peritaje" && isCrimeLauncher) {
         setViewMode("crimeScene");
         controlsRef.current?.setLookAt(0, 2.3, 2.8, 0, 1.6, -1.8, true);
       } else if (timelineId === "peritaje" && (isEvid || isLabLauncher)) {
@@ -116,6 +123,8 @@ function SceneContent({
       controlsRef.current?.setLookAt(0, 1.0, DEF_Z, 0, -0.4, 0, true);
     } else if (viewMode === "crimeScene") {
       controlsRef.current?.setLookAt(0, 2.3, 2.8, 0, 1.6, -1.8, true);
+    } else if (viewMode === "meetingRoom") {
+      controlsRef.current?.setLookAt(0, 2.4, 5.2, 0, 2.2, -3.9, true);
     } else {
       controlsRef.current?.setLookAt(0, 6, 26, 0, 0, 0, true);
     }
@@ -132,6 +141,8 @@ function SceneContent({
   useEffect(() => {
     if (viewMode === "crimeScene") {
       controlsRef.current?.setLookAt(0, 2.3, 2.8, 0, 1.6, -1.8, true);
+    } else if (viewMode === "meetingRoom") {
+      controlsRef.current?.setLookAt(0, 2.4, 5.2, 0, 2.2, -3.9, true);
     } else if (viewMode === "board") {
       controlsRef.current?.setLookAt(0, 1.0, DEF_Z, 0, -0.4, 0, true);
     }
@@ -160,11 +171,18 @@ function SceneContent({
       );
       c.setBoundary(box);
       c.boundaryEnclosesCamera = true;
+    } else if (isMeetingRoomActive) {
+      const box = new THREE.Box3(
+        new THREE.Vector3(-6.5, 0, -1.4),
+        new THREE.Vector3(6.5, 6, 7),
+      );
+      c.setBoundary(box);
+      c.boundaryEnclosesCamera = true;
     } else {
       c.setBoundary(undefined);
       c.boundaryEnclosesCamera = false;
     }
-  }, [isBoardActive, isCrimeSceneActive, boardW, boardH]);
+  }, [isBoardActive, isCrimeSceneActive, isMeetingRoomActive, boardW, boardH]);
 
   useEffect(() => {
     const onKey = (e) => {
@@ -217,6 +235,16 @@ function SceneContent({
           onResetCamera={() => {
             controlsRef.current?.setLookAt(0, 2.3, 2.8, 0, 1.6, -1.8, true);
           }}
+        />
+      ) : isMeetingRoomActive ? (
+        /* ════ VISTA D: Sala de Reunión 3D — Informe Final (FASE 6) ════ */
+        <MeetingRoom
+          onFocusScreen={() =>
+            controlsRef.current?.setLookAt(0, 2.4, -0.75, 0, 2.4, -3.9, true)
+          }
+          onResetView={() =>
+            controlsRef.current?.setLookAt(0, 2.4, 5.2, 0, 2.2, -3.9, true)
+          }
         />
       ) : (
         /* ════ VISTA B: Escenario 3D digital clásico ════ */
@@ -272,6 +300,7 @@ function SceneContent({
 
       {/* Nodos (tarjetas del tablero o esferas clásicas según la vista) */}
       {!isCrimeSceneActive &&
+        !isMeetingRoomActive &&
         boardEventos.map((evento) => (
           <TimelineNode
             key={evento.id}
@@ -310,11 +339,21 @@ function SceneContent({
       <CameraControls
         ref={controlsRef}
         minDistance={1.2}
-        maxDistance={isCrimeSceneActive ? 7.5 : 45}
-        minAzimuthAngle={isCrimeSceneActive ? -Math.PI / 3.2 : undefined}
-        maxAzimuthAngle={isCrimeSceneActive ? Math.PI / 3.2 : undefined}
-        minPolarAngle={isCrimeSceneActive ? Math.PI / 6 : undefined}
-        maxPolarAngle={isCrimeSceneActive ? Math.PI / 2.05 : Math.PI * 0.55}
+        maxDistance={isCrimeSceneActive ? 7.5 : isMeetingRoomActive ? 12 : 45}
+        minAzimuthAngle={
+          isCrimeSceneActive || isMeetingRoomActive ? -Math.PI / 3.2 : undefined
+        }
+        maxAzimuthAngle={
+          isCrimeSceneActive || isMeetingRoomActive ? Math.PI / 3.2 : undefined
+        }
+        minPolarAngle={
+          isCrimeSceneActive || isMeetingRoomActive ? Math.PI / 6 : undefined
+        }
+        maxPolarAngle={
+          isCrimeSceneActive || isMeetingRoomActive
+            ? Math.PI / 2.05
+            : Math.PI * 0.55
+        }
         smoothTime={0.45}
       />
     </>

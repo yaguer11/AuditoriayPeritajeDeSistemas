@@ -493,7 +493,8 @@
           "hallazgo": "Informe final",
           "linkUrl": "https://tvgimenez02.atlassian.net/wiki/x/BIDkAQ",
           "criticidad": "MEDIA",
-          "imagen": "/assets/informe-final.jpg"
+          "imagen": "/assets/informe-final.jpg",
+          "isMeetingRoomLauncher": true
         },
         {
           "id": "aud-09",

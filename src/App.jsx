@@ -37,6 +37,17 @@ export default function App() {
         <div className="app__title">
           <h1>{current.titulo}</h1>
           <p>{current.subtitulo}</p>
+          {current.wikiUrl && (
+            <a
+              className="app__timelineLink"
+              href={current.wikiUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Abrir documentos de{" "}
+              {current.id === "peritaje" ? "Peritaje" : "Auditoría"}
+            </a>
+          )}
         </div>
         <div className="app__headerActions">
           <nav className="app__tabs">
@@ -102,8 +113,12 @@ export default function App() {
         </div>
 
         <div className="app__footerText">
-          <span className="app__footerChip">📘 Auditoría y Peritaje de Sistemas</span>
-          <span className="app__footerChip">🎓 Ingeniería en Sistemas de Información</span>
+          <span className="app__footerChip">
+            📘 Auditoría y Peritaje de Sistemas
+          </span>
+          <span className="app__footerChip">
+            🎓 Ingeniería en Sistemas de Información
+          </span>
         </div>
       </footer>
     </div>

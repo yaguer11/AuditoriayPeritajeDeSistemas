@@ -34,7 +34,12 @@ export default function useTimelineData(timelineId) {
       return new THREE.Vector3(x, y, z);
     });
 
-    const curve = new THREE.CatmullRomCurve3(controlPoints, false, "catmullrom", 0.35);
+    const curve = new THREE.CatmullRomCurve3(
+      controlPoints,
+      false,
+      "catmullrom",
+      0.35,
+    );
     const curvePoints = curve.getPoints(n * 24);
 
     const eventos = timeline.eventos.map((ev, i) => ({
@@ -50,10 +55,13 @@ export default function useTimelineData(timelineId) {
 
 /** Metadatos de todas las líneas disponibles (para el selector de la UI). */
 export function getTimelineList() {
-  return Object.values(rawData.timelines).map(({ id, titulo, subtitulo, colorPrimario }) => ({
-    id,
-    titulo,
-    subtitulo,
-    colorPrimario,
-  }));
+  return Object.values(rawData.timelines).map(
+    ({ id, titulo, subtitulo, colorPrimario, wikiUrl }) => ({
+      id,
+      titulo,
+      subtitulo,
+      colorPrimario,
+      wikiUrl,
+    }),
+  );
 }

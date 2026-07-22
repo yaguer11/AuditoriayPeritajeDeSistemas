@@ -4,6 +4,7 @@
       "id": "peritaje",
       "titulo": "Peritaje Informático — Caso Fútbol Libre",
       "subtitulo": "Streaming ilegal · ISO/IEC 27037 & 27042 · UFECI",
+      "wikiUrl": "https://tvgimenez02.atlassian.net/wiki/spaces/1234/overview?homepageId=589997",
       "colorPrimario": "#00e5ff",
       "colorAcento": "#ff3d71",
       "eventos": [
@@ -365,6 +366,7 @@
       "id": "auditoria",
       "titulo": "Auditoría de Sistemas — Caso Despegar",
       "subtitulo": "Caja Negra · ISO 27002:2022 · Controles 8.5 y 8.23",
+      "wikiUrl": "https://tvgimenez02.atlassian.net/wiki/spaces/AD/overview?homepageId=31424688",
       "colorPrimario": "#7c4dff",
       "colorAcento": "#ffb300",
       "eventos": [
@@ -384,6 +386,8 @@
           ],
           "descripcion": "Definición de objetivos y alcance funcional de la auditoría: Control 8.5 (Autenticación Segura) y Control 8.23 (Filtrado Web) de ISO 27002:2022. Se realizan entrevistas iniciales con los equipos de Infraestructura y SecOps de Despegar para relevar la arquitectura declarada.",
           "hallazgo": "Alcance formalizado: controles 8.5 y 8.23, enfoque de caja negra",
+          "linkLabel": "Alcance formalizado",
+          "linkUrl": "https://tvgimenez02.atlassian.net/wiki/spaces/AD/pages/31064130/Definici+n+del+Alcance+de+la+Auditor+a?atlOrigin=eyJpIjoiZmUxN2ZmNjM5NmZjNGVkM2EyNjA5ZDFjMGQ2ODJjMjQiLCJwIjoiYyJ9",
           "criticidad": "INFO",
           "imagen": "/assets/kickoff-auditoria.jpg"
         },

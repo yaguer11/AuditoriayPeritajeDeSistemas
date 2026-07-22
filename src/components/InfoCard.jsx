@@ -14,8 +14,20 @@ const CRITICIDAD_COLORS = {
  * anclada al nodo activo en el espacio 3D. Muestra el detalle completo
  * del hito: fecha, hora, responsable, herramientas, hallazgo e imagen.
  */
-export default function InfoCard({ evento, color, onClose, position = [0, 1.4, 0] }) {
+export default function InfoCard({
+  evento,
+  color,
+  onClose,
+  position = [0, 1.4, 0],
+}) {
   const badge = CRITICIDAD_COLORS[evento.criticidad] ?? "#54a0ff";
+  const linkHref =
+    evento.linkUrl ??
+    (typeof evento.link === "string" && evento.link.startsWith("http")
+      ? evento.link
+      : null);
+  const linkLabel =
+    evento.linkLabel ?? (linkHref ? evento.hallazgo : evento.link);
 
   return (
     <Html
@@ -25,8 +37,15 @@ export default function InfoCard({ evento, color, onClose, position = [0, 1.4, 0
       zIndexRange={[100, 0]}
       style={{ pointerEvents: "auto" }}
     >
-      <div className="info-card" style={{ "--card-accent": color, "--card-badge": badge }}>
-        <button className="info-card__close" onClick={onClose} aria-label="Cerrar">
+      <div
+        className="info-card"
+        style={{ "--card-accent": color, "--card-badge": badge }}
+      >
+        <button
+          className="info-card__close"
+          onClick={onClose}
+          aria-label="Cerrar"
+        >
           ✕
         </button>
 
@@ -37,7 +56,9 @@ export default function InfoCard({ evento, color, onClose, position = [0, 1.4, 0
             onError={(e) => {
               // Placeholder si la imagen aún no existe en /assets
               e.currentTarget.style.display = "none";
-              e.currentTarget.parentElement.classList.add("info-card__media--empty");
+              e.currentTarget.parentElement.classList.add(
+                "info-card__media--empty",
+              );
             }}
           />
           <span className="info-card__fase">{evento.fase}</span>
@@ -55,7 +76,19 @@ export default function InfoCard({ evento, color, onClose, position = [0, 1.4, 0
           <p className="info-card__descripcion">{evento.descripcion}</p>
 
           <div className="info-card__hallazgo">
-            <strong>Hallazgo:</strong> {evento.hallazgo}
+            <strong>Link:</strong>
+            {linkHref ? (
+              <a
+                href={linkHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="info-card__hallazgo-link"
+              >
+                {linkLabel}
+              </a>
+            ) : (
+              <span>{evento.hallazgo}</span>
+            )}
           </div>
 
           <div className="info-card__row">
@@ -73,22 +106,8 @@ export default function InfoCard({ evento, color, onClose, position = [0, 1.4, 0
               ))}
             </div>
           </div>
-
-          {evento.link && (
-            <div className="info-card__link">
-              <a
-                href={evento.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="info-card__link-btn"
-              >
-                🔗 Ver en Confluence Wiki
-              </a>
-            </div>
-          )}
         </div>
       </div>
     </Html>
   );
 }
-

@@ -56,6 +56,29 @@ body,
   margin-top: 2px;
 }
 
+.app__timelineLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.08);
+  color: #f0f4ff;
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-decoration: none;
+  backdrop-filter: blur(12px);
+  transition: all 0.2s ease;
+}
+
+.app__timelineLink:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
 .app__headerActions {
   display: flex;
   align-items: center;
@@ -382,6 +405,18 @@ body,
 }
 .info-card__hallazgo strong {
   color: var(--card-badge);
+}
+
+.info-card__hallazgo-link {
+  display: inline-flex;
+  margin-left: 8px;
+  color: #8ed5ff;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.info-card__hallazgo-link:hover {
+  text-decoration: underline;
 }
 
 .info-card__row {

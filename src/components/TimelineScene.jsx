@@ -198,12 +198,15 @@ function SceneContent({
             const ev01 = eventos.find((e) => e.id === "per-01");
             if (ev01) setActiveId(ev01.id);
           }}
-          onFocusEvidence={(targetPos) => {
+          onFocusEvidence={(targetPos, cameraEye) => {
             if (controlsRef.current && targetPos) {
+              const eyeX = cameraEye ? cameraEye.x : targetPos.x;
+              const eyeY = cameraEye ? cameraEye.y : targetPos.y + 0.15;
+              const eyeZ = cameraEye ? cameraEye.z : targetPos.z + 3.4;
               controlsRef.current.setLookAt(
-                targetPos.x,
-                targetPos.y + 0.15,
-                targetPos.z + 3.4,
+                eyeX,
+                eyeY,
+                eyeZ,
                 targetPos.x,
                 targetPos.y,
                 targetPos.z,
@@ -306,9 +309,12 @@ function SceneContent({
 
       <CameraControls
         ref={controlsRef}
-        minDistance={2.0}
-        maxDistance={45}
-        maxPolarAngle={Math.PI * 0.55}
+        minDistance={1.2}
+        maxDistance={isCrimeSceneActive ? 7.5 : 45}
+        minAzimuthAngle={isCrimeSceneActive ? -Math.PI / 3.2 : undefined}
+        maxAzimuthAngle={isCrimeSceneActive ? Math.PI / 3.2 : undefined}
+        minPolarAngle={isCrimeSceneActive ? Math.PI / 6 : undefined}
+        maxPolarAngle={isCrimeSceneActive ? Math.PI / 2.05 : Math.PI * 0.55}
         smoothTime={0.45}
       />
     </>

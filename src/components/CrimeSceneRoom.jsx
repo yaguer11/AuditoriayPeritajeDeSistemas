@@ -1,5 +1,4 @@
-import { useMemo, useRef, useState } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useMemo, useState } from "react";
 import { Text, Html, Line } from "@react-three/drei";
 import * as THREE from "three";
 
@@ -238,7 +237,48 @@ function buildTpLinkSwitchTexture() {
   return texture;
 }
 
-/* ─── 4. Textura de madera para el escritorio ─── */
+/* ─── 4. Textura procedural para la unidad SSD NVMe M.2 Samsung 970 EVO Plus (EV-002) ─── */
+function buildSamsungSsdTexture() {
+  const canvas = document.createElement("canvas");
+  canvas.width = 512;
+  canvas.height = 140;
+  const ctx = canvas.getContext("2d");
+
+  ctx.fillStyle = "#0e0f13";
+  ctx.fillRect(0, 0, 512, 140);
+
+  ctx.fillStyle = "#d4af37";
+  ctx.fillRect(485, 12, 25, 116);
+
+  ctx.fillStyle = "#181a20";
+  ctx.fillRect(25, 12, 450, 116);
+
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "bold 18px Segoe UI, sans-serif";
+  ctx.fillText("V-NAND SSD", 45, 44);
+
+  ctx.fillStyle = "#ff6d00";
+  ctx.font = "bold 26px Segoe UI, sans-serif";
+  ctx.fillText("970 EVO Plus", 45, 78);
+
+  ctx.fillStyle = "#aaaaaa";
+  ctx.font = "14px Segoe UI, monospace";
+  ctx.fillText("NVMe M.2", 45, 104);
+
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "bold 24px Segoe UI, sans-serif";
+  ctx.textAlign = "right";
+  ctx.fillText("SAMSUNG", 450, 48);
+
+  ctx.font = "bold 20px Segoe UI, sans-serif";
+  ctx.fillText("1TB", 450, 88);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.needsUpdate = true;
+  return texture;
+}
+
+/* ─── 5. Textura de madera para el escritorio ─── */
 function buildDarkWoodTexture() {
   const canvas = document.createElement("canvas");
   canvas.width = 512;
@@ -262,7 +302,7 @@ function buildDarkWoodTexture() {
   return texture;
 }
 
-/* ─── 5. Componente de Teclado Mecánico 3D ─── */
+/* ─── 6. Componente de Teclado Mecánico 3D ─── */
 function MechanicalKeyboard3D({ onClick, hovered, setHovered }) {
   return (
     <group
@@ -334,29 +374,83 @@ function MechanicalKeyboard3D({ onClick, hovered, setHovered }) {
   );
 }
 
+/* ─── 7. Silla Gamer / Silla de Escritorio 3D ─── */
+function DeskChair3D() {
+  return (
+    <group position={[0.0, 0, -0.5]} rotation={[0, Math.PI / 1.25, 0]}>
+      <mesh position={[0, 0.06, 0]} castShadow>
+        <cylinderGeometry args={[0.42, 0.42, 0.05, 5]} />
+        <meshStandardMaterial color="#111318" metalness={0.8} roughness={0.3} />
+      </mesh>
+
+      {[0, 1, 2, 3, 4].map((i) => {
+        const angle = (i * Math.PI * 2) / 5;
+        const rx = Math.cos(angle) * 0.38;
+        const rz = Math.sin(angle) * 0.38;
+        return (
+          <mesh key={i} position={[rx, 0.03, rz]}>
+            <sphereGeometry args={[0.035, 12, 12]} />
+            <meshStandardMaterial color="#08080a" />
+          </mesh>
+        );
+      })}
+
+      <mesh position={[0, 0.5, 0]} castShadow>
+        <cylinderGeometry args={[0.045, 0.045, 0.85, 16]} />
+        <meshStandardMaterial color="#424242" metalness={0.9} roughness={0.2} />
+      </mesh>
+
+      <group position={[0, 0.95, 0]}>
+        <mesh castShadow receiveShadow>
+          <boxGeometry args={[0.72, 0.1, 0.68]} />
+          <meshStandardMaterial color="#181b24" roughness={0.6} />
+        </mesh>
+        <mesh position={[0, 0.052, 0]}>
+          <boxGeometry args={[0.73, 0.005, 0.69]} />
+          <meshStandardMaterial color="#00e5ff" emissive="#00e5ff" emissiveIntensity={0.8} />
+        </mesh>
+      </group>
+
+      <group position={[0, 1.45, -0.32]} rotation={[-0.1, 0, 0]}>
+        <mesh castShadow>
+          <boxGeometry args={[0.66, 0.95, 0.1]} />
+          <meshStandardMaterial color="#181b24" roughness={0.6} />
+        </mesh>
+        <mesh position={[0, 0.32, 0.055]}>
+          <boxGeometry args={[0.38, 0.18, 0.04]} />
+          <meshStandardMaterial color="#00e5ff" emissive="#00e5ff" emissiveIntensity={0.6} />
+        </mesh>
+      </group>
+
+      <mesh position={[-0.38, 1.18, -0.05]} castShadow>
+        <boxGeometry args={[0.08, 0.35, 0.42]} />
+        <meshStandardMaterial color="#111318" roughness={0.4} />
+      </mesh>
+      <mesh position={[0.38, 1.18, -0.05]} castShadow>
+        <boxGeometry args={[0.08, 0.35, 0.42]} />
+        <meshStandardMaterial color="#111318" roughness={0.4} />
+      </mesh>
+    </group>
+  );
+}
+
 /**
  * CrimeSceneRoom
  * --------------
- * Recreación 3D de la Escena del Allanamiento con gabinete tapado en su cara frontal,
- * pendrive desplazado a la izquierda para no superponer con el teclado, TAP pasivo ubicado
- * bajo/detrás del escritorio con cable conectado al switch y cámara con zoom suave y encuadre general.
+ * Recreación 3D de la Escena del Allanamiento.
+ * Enrutado continuo de cables Ethernet desde el Switch TP-Link hacia el TAP de Red Pasivo sin cortes.
  */
 export default function CrimeSceneRoom({ onFocusEvidence, onResetCamera }) {
   const googleTex = useMemo(() => buildGoogleScreenTexture(), []);
   const futbolLibreTex = useMemo(() => buildFutbolLibreScreenTexture(), []);
   const tpLinkTex = useMemo(() => buildTpLinkSwitchTexture(), []);
   const woodTex = useMemo(() => buildDarkWoodTexture(), []);
+  const samsungSsdTex = useMemo(() => buildSamsungSsdTexture(), []);
 
   const [hoveredItem, setHoveredItem] = useState(null);
   const [selectedEvidence, setSelectedEvidence] = useState(null);
 
-  const rearFanRef = useRef();
-
-  useFrame((_, delta) => {
-    if (rearFanRef.current) rearFanRef.current.rotation.z += delta * 12;
-  });
-
-  // Catálogo completo de evidencias
+  // Catálogo de evidencias
   const EVIDENCE_DATA = {
     gabinete: {
       codigo: "EV-001 (Hardware PC)",
@@ -367,8 +461,22 @@ export default function CrimeSceneRoom({ onFocusEvidence, onResetCamera }) {
         "Computadora de escritorio hallada encendida in situ ejecutando el servidor de streaming HLS. Se realizó el volcado de memoria RAM de 16 GB antes del apagado para preservar procesos volátiles y claves criptográficas.",
       hallazgo: "PC Dynamax encendida con transmisión HLS activa. RAM preservada.",
       criticidad: "CRÍTICA",
-      imagen: "/assets/escena-allanamiento.png",
+      imagen: "/evidencias/gabinete.png",
       pos: { x: 2.2, y: 2.5, z: -2.4 },
+    },
+    ssd: {
+      codigo: "EV-002",
+      titulo: "EV-002 Disco NVMe 1 TB Externo de la WS, Samsung 970 EVO Plus",
+      fase: "FASE III & IV",
+      herramientas: ["Tableau T35689iu", "FTK Imager", "Hash MD5/SHA256"],
+      descripcion:
+        "Unidad de estado sólido NVMe M.2 Samsung 970 EVO Plus de 1 TB conectada a la placa madre Gigabyte AORUS de la Workstation EV-001. Contiene el sistema operativo Windows, repositorios de streaming y credenciales de acceso.",
+      hallazgo: "Unidad SSD NVMe EV-002 secuestrada y duplicada forense mediante bloqueador de escritura Tableau T35689iu.",
+      criticidad: "CRÍTICA",
+      imagen: "/evidencias/ssd m2.png",
+      pos: { x: 2.15, y: 2.5, z: -2.45 },
+      cameraEye: { x: 0.8, y: 2.45, z: -1.0 },
+      modalOffsetY: 2.1,
     },
     streaming: {
       codigo: "EV-001 (Pantalla HLS)",
@@ -379,7 +487,7 @@ export default function CrimeSceneRoom({ onFocusEvidence, onResetCamera }) {
         "Monitor secundario con el sitio web https://futbollibre.tv transmitiendo la señal 'Copa Mundial: Francia vs España'. Se constató la red de distribución HLS y la captura de paquetes .m3u8 en caliente.",
       hallazgo: "Señal HLS capturada en directo sin alteraciones del sistema.",
       criticidad: "CRÍTICA",
-      imagen: "/assets/escena-allanamiento.png",
+      imagen: "/evidencias/monitores.png",
       pos: { x: 0.2, y: 2.4, z: -2.5 },
     },
     switch: {
@@ -391,7 +499,7 @@ export default function CrimeSceneRoom({ onFocusEvidence, onResetCamera }) {
         "Switch de escritorio de 8 puertos Easy Smart TP-Link TL-SG108E hallado con cables de red conectando hacia el TAP de red EV-004 e infraestructura saliente.",
       hallazgo: "Switch EV-003 secuestrado e ingresado a cadena de custodia.",
       criticidad: "ALTA",
-      imagen: "/assets/extraccion-nvme.png",
+      imagen: "/evidencias/switch.png",
       pos: { x: -2.9, y: 1.88, z: -2.2 },
     },
     tap: {
@@ -403,20 +511,8 @@ export default function CrimeSceneRoom({ onFocusEvidence, onResetCamera }) {
         "Dispositivo de captura de tráfico de red en tránsito interpuesto en la línea Ethernet (conectado al Switch EV-003). Permitió interceptar las peticiones GET .m3u8 y fragmentos de video .ts sin inyectar paquetes ni alterar el canal.",
       hallazgo: "Tráfico de streaming capturado en caliente mediante TAP pasivo EV-004.",
       criticidad: "CRÍTICA",
-      imagen: "/assets/wireshark-ts.jpg",
-      pos: { x: -2.5, y: 0.2, z: -2.8 },
-    },
-    usb: {
-      codigo: "USB-REG-001",
-      titulo: "Pendrive Forense Estéril USB 3.0 (Winpmem)",
-      fase: "FASE I & III",
-      herramientas: ["Winpmem", "Script CMD Triage", "KAPE"],
-      descripcion:
-        "Unidad USB 3.0 estéril previamente verificada utilizada por el equipo pericial para ejecutar Winpmem y scripts de triage in situ en la escena del allanamiento, almacenando la imagen de la memoria RAM.",
-      hallazgo: "Volcado de RAM de 16 GB y triage inicial alojados en unidad estéril USB-REG-001.",
-      criticidad: "ALTA",
-      imagen: "/assets/ram-dump.png",
-      pos: { x: -2.1, y: 1.74, z: -1.7 },
+      imagen: "/evidencias/tap.png",
+      pos: { x: -2.5, y: 0.15, z: -2.8 },
     },
     google: {
       codigo: "EV-001 (Navegador)",
@@ -427,7 +523,7 @@ export default function CrimeSceneRoom({ onFocusEvidence, onResetCamera }) {
         "Pantalla principal que exhibía el navegador Chrome en modo oscuro. El análisis posterior recuperó sesiones de administración, accesos a paneles de control y chats de Telegram.",
       hallazgo: "Sesiones de administración y rastros de accesos web recuperados.",
       criticidad: "MEDIA",
-      imagen: "/assets/dev-tools.jpg",
+      imagen: "/evidencias/monitores.png",
       pos: { x: -2.1, y: 2.4, z: -2.4 },
     },
   };
@@ -437,7 +533,7 @@ export default function CrimeSceneRoom({ onFocusEvidence, onResetCamera }) {
     if (data) {
       setSelectedEvidence(data);
       if (onFocusEvidence && data.pos) {
-        onFocusEvidence(data.pos);
+        onFocusEvidence(data.pos, data.cameraEye);
       }
     }
   };
@@ -478,31 +574,58 @@ export default function CrimeSceneRoom({ onFocusEvidence, onResetCamera }) {
         shadow-mapSize={[2048, 2048]}
       />
 
-      {/* ─── 2. CAMA SIMPLE PEGADA A LA PARED DERECHA Y AL FONDO ─── */}
-      <group position={[6.4, 0.45, -2.1]}>
-        <mesh castShadow receiveShadow position={[0, 0, 0]}>
+      {/* ─── 2. CAMA SIMPLE APOYADA PLANO EN EL PISO ─── */}
+      <group position={[6.4, 0, -2.1]}>
+        <mesh castShadow receiveShadow position={[0, 0.175, 0]}>
           <boxGeometry args={[2.0, 0.35, 3.6]} />
           <meshStandardMaterial color="#3e2723" roughness={0.6} />
         </mesh>
-        <mesh castShadow position={[0, 0.55, -1.75]}>
-          <boxGeometry args={[2.0, 1.1, 0.12]} />
+
+        <mesh castShadow position={[0, 0.6, -1.75]}>
+          <boxGeometry args={[2.0, 1.2, 0.12]} />
           <meshStandardMaterial color="#2d1a0e" roughness={0.5} />
         </mesh>
-        <mesh castShadow receiveShadow position={[0, 0.32, 0.05]}>
+
+        <mesh castShadow receiveShadow position={[0, 0.54, 0.05]}>
           <boxGeometry args={[1.85, 0.38, 3.3]} />
           <meshStandardMaterial color="#f5f5f7" roughness={0.9} />
         </mesh>
-        <mesh castShadow receiveShadow position={[0, 0.48, 0.45]}>
+
+        <mesh castShadow receiveShadow position={[0, 0.72, 0.45]}>
           <boxGeometry args={[1.87, 0.1, 2.4]} />
           <meshStandardMaterial color="#1a2b4c" roughness={0.8} />
         </mesh>
-        <mesh castShadow position={[0, 0.52, -1.1]}>
+
+        <mesh castShadow position={[0, 0.77, -1.1]}>
           <boxGeometry args={[1.5, 0.14, 0.55]} />
           <meshStandardMaterial color="#ffffff" roughness={0.9} />
         </mesh>
       </group>
 
-      {/* ─── 3. ESCRITORIO MÁS ALTO Y PEGADO A LA PARED DEL FONDO (z = -2.5) ─── */}
+      {/* ─── MESITA DE NOCHE ─── */}
+      <group position={[4.5, 0, -3.5]}>
+        <mesh castShadow receiveShadow position={[0, 0.35, 0]}>
+          <boxGeometry args={[0.75, 0.7, 0.65]} />
+          <meshStandardMaterial color="#2d1a0e" roughness={0.6} />
+        </mesh>
+        <mesh position={[0, 0.78, 0]} castShadow>
+          <cylinderGeometry args={[0.08, 0.12, 0.16, 16]} />
+          <meshStandardMaterial color="#ffcc80" emissive="#ffcc80" emissiveIntensity={1.5} toneMapped={false} />
+        </mesh>
+        <pointLight position={[0, 0.8, 0]} intensity={1.2} color="#ffb74d" distance={3.0} />
+      </group>
+
+      {/* ─── CUADRO EN PARED DERECHA ─── */}
+      <mesh position={[7.44, 3.4, -0.5]} rotation={[0, -Math.PI / 2, 0]}>
+        <planeGeometry args={[1.2, 1.6]} />
+        <meshStandardMaterial color="#1e2c38" roughness={0.5} />
+      </mesh>
+      <mesh position={[7.42, 3.4, -0.5]} rotation={[0, -Math.PI / 2, 0]}>
+        <planeGeometry args={[1.05, 1.45]} />
+        <meshStandardMaterial color="#00e5ff" roughness={0.8} />
+      </mesh>
+
+      {/* ─── 3. ESCRITORIO DE MADERA ─── */}
       <group position={[0, 0, -2.5]}>
         <mesh position={[0, 1.65, 0]} castShadow receiveShadow>
           <boxGeometry args={[7.4, 0.1, 2.9]} />
@@ -523,6 +646,9 @@ export default function CrimeSceneRoom({ onFocusEvidence, onResetCamera }) {
           <meshStandardMaterial color="#1e1008" roughness={0.6} />
         </mesh>
       </group>
+
+      {/* ─── SILLA GAMER DE ESCRITORIO ─── */}
+      <DeskChair3D />
 
       {/* ─── 4. Monitor Izquierdo (LG — Google Dark Mode) ─── */}
       <group
@@ -626,28 +752,25 @@ export default function CrimeSceneRoom({ onFocusEvidence, onResetCamera }) {
         </group>
       </group>
 
-      {/* ─── 6. GABINETE PC TOWER EV-001 (PANEL FRONTAL CUBIERTO / TAPA SOLIDA) ─── */}
-      <group
-        position={[2.2, 1.7, -2.45]}
-        onClick={(e) => {
-          e.stopPropagation();
-          handleSelect("gabinete");
-        }}
-        onPointerOver={() => {
-          setHoveredItem("gabinete");
-          document.body.style.cursor = "pointer";
-        }}
-        onPointerOut={() => {
-          setHoveredItem(null);
-          document.body.style.cursor = "auto";
-        }}
-      >
-        {/* Chasis Principal (Pared derecha, tapa superior/inferior, parte trasera) */}
-        <mesh position={[0.42, 0.85, 0]}>
+      {/* ─── 6. GABINETE PC TOWER EV-001 CON PLACA MADRE E ILUMINACIÓN Y EV-002 CLICKEABLE ─── */}
+      <group position={[2.2, 1.7, -2.45]}>
+        <mesh
+          position={[0.42, 0.85, 0]}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleSelect("gabinete");
+          }}
+        >
           <boxGeometry args={[0.02, 1.62, 1.7]} />
           <meshStandardMaterial color="#0c0d10" roughness={0.4} metalness={0.7} />
         </mesh>
-        <mesh position={[0, 1.65, 0]}>
+        <mesh
+          position={[0, 1.65, 0]}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleSelect("gabinete");
+          }}
+        >
           <boxGeometry args={[0.85, 0.02, 1.7]} />
           <meshStandardMaterial color="#0c0d10" roughness={0.4} metalness={0.7} />
         </mesh>
@@ -655,13 +778,24 @@ export default function CrimeSceneRoom({ onFocusEvidence, onResetCamera }) {
           <boxGeometry args={[0.85, 0.02, 1.7]} />
           <meshStandardMaterial color="#0c0d10" roughness={0.4} metalness={0.7} />
         </mesh>
-        <mesh position={[0, 0.85, -0.84]}>
+        <mesh
+          position={[0, 0.85, -0.84]}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleSelect("gabinete");
+          }}
+        >
           <boxGeometry args={[0.85, 1.62, 0.02]} />
           <meshStandardMaterial color="#0c0d10" roughness={0.4} metalness={0.7} />
         </mesh>
 
-        {/* TAPA / PANEL FRONTAL SÓLIDO (Cubre completamente la vista frontal del interior) */}
-        <group position={[0, 0, 0.85]}>
+        <group
+          position={[0, 0, 0.85]}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleSelect("gabinete");
+          }}
+        >
           <mesh position={[0, 0.85, 0.02]} castShadow>
             <boxGeometry args={[0.81, 1.58, 0.04]} />
             <meshStandardMaterial color="#0f1117" roughness={0.6} metalness={0.8} />
@@ -676,7 +810,6 @@ export default function CrimeSceneRoom({ onFocusEvidence, onResetCamera }) {
             Dynamax
           </Text>
 
-          {/* Anillos LED frontales decorativos */}
           <group position={[0, 1.15, 0.042]}>
             <mesh>
               <torusGeometry args={[0.32, 0.02, 16, 32]} />
@@ -691,51 +824,115 @@ export default function CrimeSceneRoom({ onFocusEvidence, onResetCamera }) {
           </group>
         </group>
 
-        {/* Ventana de cristal en el costado izquierdo (-X) */}
-        <mesh position={[-0.425, 0.85, 0]}>
+        {/* Ventana de cristal transparente */}
+        <mesh position={[-0.425, 0.85, 0]} raycast={() => null}>
           <boxGeometry args={[0.015, 1.58, 1.66]} />
           <meshPhysicalMaterial
             color="#ffffff"
             transparent
-            opacity={0.12}
-            roughness={0.05}
-            transmission={0.98}
+            opacity={0.08}
+            roughness={0.02}
+            transmission={0.99}
             ior={1.5}
           />
         </mesh>
 
-        {/* Componentes internos visibles solo desde el vidrio lateral */}
-        <group position={[-0.05, 0.85, 0]}>
-          <mesh position={[0.3, 0, 0]}>
-            <boxGeometry args={[0.02, 1.35, 1.45]} />
-            <meshStandardMaterial color="#1a237e" roughness={0.5} />
+        {/* Hotspot para seleccionar el SSD NVMe M.2 EV-002 */}
+        <group
+          position={[-0.43, 0.93, -0.05]}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleSelect("ssd");
+          }}
+          onPointerOver={(e) => {
+            e.stopPropagation();
+            setHoveredItem("ssd");
+            document.body.style.cursor = "pointer";
+          }}
+          onPointerOut={() => {
+            setHoveredItem(null);
+            document.body.style.cursor = "auto";
+          }}
+        >
+          <mesh>
+            <boxGeometry args={[0.08, 0.32, 0.65]} />
+            <meshBasicMaterial
+              color={hoveredItem === "ssd" ? "#ff6d00" : "#00e5ff"}
+              transparent
+              opacity={hoveredItem === "ssd" ? 0.35 : 0.08}
+            />
           </mesh>
-          <group position={[-0.05, -0.1, 0]}>
+          <Text
+            font={HANDWRITTEN_FONT}
+            fontSize={0.045}
+            color="#ffffff"
+            position={[-0.045, 0, 0]}
+            rotation={[0, -Math.PI / 2, 0]}
+          >
+            EV-002 (SSD NVMe M.2)
+          </Text>
+        </group>
+
+        {/* Interior Placa Madre AORUS + SSD M.2 */}
+        <group position={[-0.05, 0.85, 0]}>
+          <mesh position={[-0.05, 0, 0]}>
+            <boxGeometry args={[0.02, 1.35, 1.45]} />
+            <meshStandardMaterial color="#1a2332" roughness={0.4} />
+          </mesh>
+
+          <mesh position={[-0.07, -0.32, 0.28]}>
+            <boxGeometry args={[0.04, 0.22, 0.22]} />
+            <meshStandardMaterial color="#b0bec5" metalness={0.9} roughness={0.1} />
+          </mesh>
+          <Text
+            font={HANDWRITTEN_FONT}
+            fontSize={0.045}
+            color="#111111"
+            position={[-0.095, -0.32, 0.28]}
+            rotation={[0, -Math.PI / 2, 0]}
+          >
+            AORUS
+          </Text>
+
+          <mesh position={[-0.07, 0.35, 0.35]}>
+            <boxGeometry args={[0.03, 0.42, 0.08]} />
+            <meshStandardMaterial color="#111" roughness={0.3} />
+          </mesh>
+
+          {/* Módulo SSD Samsung 970 EVO Plus M.2 */}
+          <group position={[-0.08, 0.08, -0.05]}>
             <mesh castShadow>
-              <boxGeometry args={[0.38, 0.14, 0.9]} />
+              <boxGeometry args={[0.03, 0.16, 0.52]} />
+              <meshStandardMaterial
+                map={samsungSsdTex}
+                roughness={0.2}
+                metalness={0.6}
+                emissive={hoveredItem === "ssd" ? "#ff6d00" : "#221100"}
+                emissiveIntensity={hoveredItem === "ssd" ? 1.2 : 0.4}
+              />
+            </mesh>
+            <pointLight position={[-0.1, 0, 0]} intensity={1.5} color="#ff6d00" distance={1.2} />
+          </group>
+
+          <group position={[-0.15, -0.22, 0]}>
+            <mesh castShadow>
+              <boxGeometry args={[0.32, 0.12, 0.85]} />
               <meshStandardMaterial color="#212121" metalness={0.8} roughness={0.2} />
             </mesh>
             <Text
               font={HANDWRITTEN_FONT}
-              fontSize={0.055}
+              fontSize={0.048}
               color="#76b900"
-              position={[-0.2, 0, 0]}
+              position={[-0.17, 0, 0]}
               rotation={[0, -Math.PI / 2, 0]}
             >
               GEFORCE RTX
             </Text>
           </group>
-          <group position={[0.12, 0.45, -0.65]}>
-            <mesh ref={rearFanRef} rotation={[Math.PI / 2, 0, 0]}>
-              <torusGeometry args={[0.22, 0.02, 12, 24]} />
-              <meshStandardMaterial color="#80d8ff" emissive="#80d8ff" emissiveIntensity={3.5} toneMapped={false} />
-            </mesh>
-          </group>
         </group>
 
-        <pointLight position={[-0.2, 0.9, 0]} intensity={2.5} color="#00e5ff" distance={3.0} />
+        <pointLight position={[-0.2, 0.9, 0]} intensity={4.5} color="#e0f7fa" distance={3.5} />
 
-        {/* Micrófono superior */}
         <group position={[0, 1.7, 0.2]}>
           <mesh castShadow>
             <boxGeometry args={[0.3, 0.08, 0.4]} />
@@ -787,31 +984,36 @@ export default function CrimeSceneRoom({ onFocusEvidence, onResetCamera }) {
           <planeGeometry args={[0.82, 0.16]} />
           <meshBasicMaterial map={tpLinkTex} />
         </mesh>
-
-        {/* Cables del switch saliendo hacia el lateral y bajando directamente al TAP */}
-        <Line
-          points={[
-            [-0.25, 0, 0.29],
-            [-0.38, 0, 0.35],
-            [-0.45, -0.4, 0.1],
-            [-0.4, -1.7, -0.5],
-          ]}
-          color="#1e88e5"
-          lineWidth={5}
-        />
-        <Line
-          points={[
-            [-0.17, 0, 0.29],
-            [-0.32, 0, 0.35],
-            [-0.42, -0.4, 0.1],
-            [-0.38, -1.7, -0.5],
-          ]}
-          color="#151515"
-          lineWidth={5}
-        />
       </group>
 
-      {/* ─── 8. EV-004: TAP DE RED PASIVO UBICADO EN EL PISO ATRÁS/ABAJO DEL ESCRITORIO ─── */}
+      {/* ─── CABLES ETHERNET CONTINUOS Y PERFECTAMENTE ENRUTADOS HASTA EL TAP ─── */}
+      {/* Cable Azul Ethernet (Switch Puerto 1 -> Borde Trasero -> Pared Posterior -> Conector Izquierdo del TAP en el piso) */}
+      <Line
+        points={[
+          [-3.15, 1.79, -1.91],
+          [-3.15, 1.71, -1.75],
+          [-2.5, 1.71, -1.75],
+          [-2.5, 1.71, -3.85],
+          [-2.8, 0.05, -3.85],
+          [-2.8, 0.05, -2.9],
+          [-2.58, 0.05, -2.83],
+        ]}
+        color="#1e88e5"
+        lineWidth={5}
+      />
+
+      {/* Cable Negro de Red Saliente (Conector Derecho del TAP en el piso -> Borde Trasero -> Pared Posterior) */}
+      <Line
+        points={[
+          [-2.42, 0.05, -2.77],
+          [-2.15, 0.05, -2.85],
+          [-2.15, 0.05, -3.98],
+        ]}
+        color="#151515"
+        lineWidth={5}
+      />
+
+      {/* ─── 8. EV-004: TAP DE RED PASIVO ─── */}
       <group
         position={[-2.5, 0.04, -2.8]}
         rotation={[0, 0.3, 0]}
@@ -836,6 +1038,19 @@ export default function CrimeSceneRoom({ onFocusEvidence, onResetCamera }) {
             roughness={0.4}
           />
         </mesh>
+
+        {/* Puerto RJ45 Izquierdo */}
+        <mesh position={[-0.082, 0, 0]}>
+          <boxGeometry args={[0.01, 0.025, 0.04]} />
+          <meshStandardMaterial color="#1a1a1a" />
+        </mesh>
+
+        {/* Puerto RJ45 Derecho */}
+        <mesh position={[0.082, 0, 0]}>
+          <boxGeometry args={[0.01, 0.025, 0.04]} />
+          <meshStandardMaterial color="#1a1a1a" />
+        </mesh>
+
         <Text
           font={HANDWRITTEN_FONT}
           fontSize={0.04}
@@ -847,73 +1062,9 @@ export default function CrimeSceneRoom({ onFocusEvidence, onResetCamera }) {
         >
           TAP
         </Text>
-
-        {/* Cable 1: Viene bajando desde el Switch TP-Link hasta el TAP */}
-        <Line
-          points={[
-            [-0.4, 1.75, 0.6],
-            [-0.2, 0.8, 0.3],
-            [-0.08, 0.01, 0],
-          ]}
-          color="#1e88e5"
-          lineWidth={5}
-        />
-
-        {/* Cable 2: Sale del TAP y se mete bajo la pared del fondo sin verse donde termina */}
-        <Line
-          points={[
-            [0.08, 0.01, 0],
-            [0.4, 0.01, -0.6],
-            [0.9, 0.01, -1.5],
-          ]}
-          color="#1e88e5"
-          lineWidth={5}
-        />
       </group>
 
-      {/* ─── 9. USB-REG-001: PENDRIVE DESPLAZADO MÁS A LA IZQUIERDA (x = -2.1) ─── */}
-      <group
-        position={[-2.1, 1.71, -1.7]}
-        rotation={[0, 0.4, 0]}
-        onClick={(e) => {
-          e.stopPropagation();
-          handleSelect("usb");
-        }}
-        onPointerOver={() => {
-          setHoveredItem("usb");
-          document.body.style.cursor = "pointer";
-        }}
-        onPointerOut={() => {
-          setHoveredItem(null);
-          document.body.style.cursor = "auto";
-        }}
-      >
-        <mesh castShadow receiveShadow>
-          <boxGeometry args={[0.26, 0.04, 0.11]} />
-          <meshStandardMaterial
-            color={hoveredItem === "usb" ? "#00e5ff" : "#78909c"}
-            metalness={0.9}
-            roughness={0.2}
-          />
-        </mesh>
-        <mesh position={[-0.16, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
-          <torusGeometry args={[0.055, 0.015, 16, 32]} />
-          <meshStandardMaterial color="#607d8b" metalness={0.9} roughness={0.2} />
-        </mesh>
-        <Text
-          font={HANDWRITTEN_FONT}
-          fontSize={0.038}
-          color="#ffffff"
-          position={[0.02, 0.022, 0]}
-          rotation={[-Math.PI / 2, 0, 0]}
-          anchorX="center"
-          anchorY="middle"
-        >
-          USB 3.0
-        </Text>
-      </group>
-
-      {/* ─── 10. TECLADO MECÁNICO 3D ─── */}
+      {/* ─── 9. TECLADO MECÁNICO 3D ─── */}
       <MechanicalKeyboard3D
         onClick={() => handleSelect("gabinete")}
         hovered={hoveredItem === "keyboard"}
@@ -936,22 +1087,30 @@ export default function CrimeSceneRoom({ onFocusEvidence, onResetCamera }) {
         </mesh>
       </group>
 
-      {/* ─── 11. POPUP MODAL INTERACTIVO DE DETALLES DE EVIDENCIA ─── */}
+      {/* ─── 10. POPUP MODAL INTERACTIVO DE DETALLES DE EVIDENCIA CON FOTOS REALES ─── */}
       {selectedEvidence && (
-        <Html position={[0, 2.8, -1.5]} center zIndexRange={[100, 0]}>
+        <Html
+          position={[
+            selectedEvidence.pos.x,
+            selectedEvidence.pos.y + (selectedEvidence.modalOffsetY || 1.75),
+            selectedEvidence.pos.z,
+          ]}
+          center
+          zIndexRange={[100, 0]}
+        >
           <div
             style={{
-              background: "rgba(12, 16, 28, 0.95)",
+              background: "rgba(12, 16, 28, 0.96)",
               border: `2px solid ${
                 selectedEvidence.criticidad === "CRÍTICA" ? "#ff3d71" : "#00e5ff"
               }`,
-              boxShadow: "0 0 35px rgba(0, 229, 255, 0.4)",
+              boxShadow: "0 0 25px rgba(0, 229, 255, 0.35)",
               backdropFilter: "blur(16px)",
-              borderRadius: "16px",
-              padding: "22px 28px",
+              borderRadius: "14px",
+              padding: "14px 18px",
               color: "#ffffff",
-              width: "480px",
-              maxWidth: "90vw",
+              width: "360px",
+              maxWidth: "85vw",
               fontFamily: "Segoe UI, sans-serif",
               pointerEvents: "auto",
               position: "relative",
@@ -961,12 +1120,12 @@ export default function CrimeSceneRoom({ onFocusEvidence, onResetCamera }) {
               onClick={handleClose}
               style={{
                 position: "absolute",
-                top: "14px",
-                right: "18px",
+                top: "10px",
+                right: "14px",
                 background: "transparent",
                 border: "none",
                 color: "#99aabb",
-                fontSize: "1.3rem",
+                fontSize: "1.15rem",
                 cursor: "pointer",
                 fontWeight: "bold",
               }}
@@ -978,19 +1137,19 @@ export default function CrimeSceneRoom({ onFocusEvidence, onResetCamera }) {
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: "10px",
-                marginBottom: "8px",
+                gap: "8px",
+                marginBottom: "6px",
               }}
             >
               <span
                 style={{
                   background: "#00e5ff",
                   color: "#0a0d1a",
-                  padding: "4px 10px",
-                  borderRadius: "6px",
-                  fontSize: "12px",
+                  padding: "3px 8px",
+                  borderRadius: "5px",
+                  fontSize: "11px",
                   fontWeight: 900,
-                  letterSpacing: "0.08em",
+                  letterSpacing: "0.06em",
                 }}
               >
                 {selectedEvidence.codigo}
@@ -1000,37 +1159,67 @@ export default function CrimeSceneRoom({ onFocusEvidence, onResetCamera }) {
                   background: "rgba(255, 61, 113, 0.2)",
                   color: "#ff3d71",
                   border: "1px solid #ff3d71",
-                  padding: "3px 8px",
-                  borderRadius: "6px",
-                  fontSize: "11px",
+                  padding: "2px 6px",
+                  borderRadius: "5px",
+                  fontSize: "10px",
                   fontWeight: 800,
                 }}
               >
                 {selectedEvidence.criticidad}
               </span>
-              <span style={{ fontSize: "12px", color: "#8899aa" }}>
+              <span style={{ fontSize: "11px", color: "#8899aa" }}>
                 {selectedEvidence.fase}
               </span>
             </div>
 
             <h3
               style={{
-                fontSize: "1.2rem",
+                fontSize: "1.0rem",
                 fontWeight: 700,
-                margin: "0 0 10px",
+                margin: "0 0 8px",
                 color: "#ffffff",
-                lineHeight: "1.3",
+                lineHeight: "1.25",
               }}
             >
               {selectedEvidence.titulo}
             </h3>
 
+            {/* FOTO REAL DE LA EVIDENCIA */}
+            {selectedEvidence.imagen && (
+              <div
+                style={{
+                  marginBottom: "10px",
+                  borderRadius: "8px",
+                  overflow: "hidden",
+                  border: `1px solid ${
+                    selectedEvidence.criticidad === "CRÍTICA" ? "#ff3d71" : "#00e5ff"
+                  }`,
+                  background: "#05070f",
+                  maxHeight: "135px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <img
+                  src={selectedEvidence.imagen}
+                  alt={selectedEvidence.titulo}
+                  style={{
+                    width: "100%",
+                    maxHeight: "135px",
+                    objectFit: "contain",
+                    display: "block",
+                  }}
+                />
+              </div>
+            )}
+
             <p
               style={{
-                fontSize: "0.88rem",
+                fontSize: "0.80rem",
                 color: "#c5d2ec",
-                lineHeight: "1.5",
-                marginBottom: "14px",
+                lineHeight: "1.4",
+                marginBottom: "10px",
               }}
             >
               {selectedEvidence.descripcion}
@@ -1039,18 +1228,18 @@ export default function CrimeSceneRoom({ onFocusEvidence, onResetCamera }) {
             <div
               style={{
                 background: "rgba(0, 229, 255, 0.08)",
-                borderLeft: "4px solid #00e5ff",
-                padding: "10px 14px",
+                borderLeft: "3px solid #00e5ff",
+                padding: "6px 10px",
                 borderRadius: "4px",
-                fontSize: "0.84rem",
-                marginBottom: "14px",
+                fontSize: "0.78rem",
+                marginBottom: "10px",
                 color: "#e2f8ff",
               }}
             >
               <strong>Hallazgo In Situ:</strong> {selectedEvidence.hallazgo}
             </div>
 
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "5px" }}>
               {selectedEvidence.herramientas.map((h) => (
                 <span
                   key={h}
@@ -1058,8 +1247,8 @@ export default function CrimeSceneRoom({ onFocusEvidence, onResetCamera }) {
                     background: "rgba(255,255,255,0.08)",
                     border: "1px solid rgba(255,255,255,0.15)",
                     borderRadius: "4px",
-                    padding: "3px 8px",
-                    fontSize: "11px",
+                    padding: "2px 6px",
+                    fontSize: "10px",
                     color: "#a0b5d0",
                   }}
                 >

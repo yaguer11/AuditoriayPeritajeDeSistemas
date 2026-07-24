@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Text, Html, Line } from "@react-three/drei";
 import * as THREE from "three";
 
@@ -448,7 +448,9 @@ export default function CrimeSceneRoom({ onFocusEvidence, onResetCamera }) {
   const samsungSsdTex = useMemo(() => buildSamsungSsdTexture(), []);
 
   const [hoveredItem, setHoveredItem] = useState(null);
-  const [selectedEvidence, setSelectedEvidence] = useState(null);
+  const [selectedKey, setSelectedKey] = useState(null);
+
+  const EVIDENCE_KEYS = useMemo(() => ["google", "streaming", "switch", "tap", "gabinete", "ssd"], []);
 
   // Catálogo de evidencias
   const EVIDENCE_DATA = {
@@ -528,10 +530,12 @@ export default function CrimeSceneRoom({ onFocusEvidence, onResetCamera }) {
     },
   };
 
+  const selectedEvidence = selectedKey ? EVIDENCE_DATA[selectedKey] : null;
+
   const handleSelect = (key) => {
     const data = EVIDENCE_DATA[key];
     if (data) {
-      setSelectedEvidence(data);
+      setSelectedKey(key);
       if (onFocusEvidence && data.pos) {
         onFocusEvidence(data.pos, data.cameraEye);
       }
@@ -539,14 +543,37 @@ export default function CrimeSceneRoom({ onFocusEvidence, onResetCamera }) {
   };
 
   const handleClose = () => {
-    setSelectedEvidence(null);
+    setSelectedKey(null);
     if (onResetCamera) onResetCamera();
   };
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (!selectedKey) return; // Sólo actuar si hay una evidencia seleccionada
+      
+      if (e.key === "ArrowLeft") {
+        const currentIndex = EVIDENCE_KEYS.indexOf(selectedKey);
+        const prevIndex = (currentIndex - 1 + EVIDENCE_KEYS.length) % EVIDENCE_KEYS.length;
+        handleSelect(EVIDENCE_KEYS[prevIndex]);
+      } else if (e.key === "ArrowRight") {
+        const currentIndex = EVIDENCE_KEYS.indexOf(selectedKey);
+        const nextIndex = (currentIndex + 1) % EVIDENCE_KEYS.length;
+        handleSelect(EVIDENCE_KEYS[nextIndex]);
+      } else if (e.key === "Escape") {
+        handleClose();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedKey, handleSelect, handleClose, EVIDENCE_KEYS]);
+
   return (
-    <group position={[0, -0.75, 0]}>
-      {/* ─── 1. PAREDES Y PISO DE LA HABITACIÓN ─── */}
-      <mesh position={[0, 3.5, -4.0]} receiveShadow>
+    <>
+      <color attach="background" args={["#05060f"]} />
+      <group position={[0, -0.75, 0]}>
+        {/* ─── 1. PAREDES Y PISO DE LA HABITACIÓN ─── */}
+        <mesh position={[0, 3.5, -4.0]} receiveShadow>
         <planeGeometry args={[20, 12]} />
         <meshStandardMaterial color="#d8d2c8" roughness={0.9} />
       </mesh>
@@ -1098,167 +1125,267 @@ export default function CrimeSceneRoom({ onFocusEvidence, onResetCamera }) {
           center
           zIndexRange={[100, 0]}
         >
-          <div
-            style={{
-              background: "rgba(12, 16, 28, 0.96)",
-              border: `2px solid ${
-                selectedEvidence.criticidad === "CRÍTICA" ? "#ff3d71" : "#00e5ff"
-              }`,
-              boxShadow: "0 0 25px rgba(0, 229, 255, 0.35)",
-              backdropFilter: "blur(16px)",
-              borderRadius: "14px",
-              padding: "14px 18px",
-              color: "#ffffff",
-              width: "360px",
-              maxWidth: "85vw",
-              fontFamily: "Segoe UI, sans-serif",
-              pointerEvents: "auto",
-              position: "relative",
-            }}
-          >
+          <div style={{ position: "relative" }}>
+            {/* Sleek Floating Left Navigation Arrow */}
             <button
-              onClick={handleClose}
+              onClick={(e) => {
+                e.stopPropagation();
+                const currentIndex = EVIDENCE_KEYS.indexOf(selectedKey);
+                const prevIndex = (currentIndex - 1 + EVIDENCE_KEYS.length) % EVIDENCE_KEYS.length;
+                handleSelect(EVIDENCE_KEYS[prevIndex]);
+              }}
               style={{
                 position: "absolute",
-                top: "10px",
-                right: "14px",
-                background: "transparent",
-                border: "none",
-                color: "#99aabb",
-                fontSize: "1.15rem",
+                left: "-52px",
+                top: "50%",
+                transform: "translateY(-50%)",
+                background: "rgba(12, 16, 28, 0.94)",
+                border: "2px solid #00e5ff",
+                color: "#00e5ff",
+                width: "38px",
+                height: "38px",
+                borderRadius: "50%",
                 cursor: "pointer",
-                fontWeight: "bold",
-              }}
-            >
-              ✕
-            </button>
-
-            <div
-              style={{
+                fontSize: "1.1rem",
                 display: "flex",
                 alignItems: "center",
-                gap: "8px",
-                marginBottom: "6px",
+                justifyContent: "center",
+                boxShadow: "0 0 15px rgba(0, 229, 255, 0.35)",
+                transition: "all 0.2s ease",
+                pointerEvents: "auto",
               }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "#00e5ff";
+                e.currentTarget.style.color = "#0a0d1a";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "rgba(12, 16, 28, 0.94)";
+                e.currentTarget.style.color = "#00e5ff";
+              }}
+              title="Dispositivo Anterior"
             >
-              <span
-                style={{
-                  background: "#00e5ff",
-                  color: "#0a0d1a",
-                  padding: "3px 8px",
-                  borderRadius: "5px",
-                  fontSize: "11px",
-                  fontWeight: 900,
-                  letterSpacing: "0.06em",
-                }}
-              >
-                {selectedEvidence.codigo}
-              </span>
-              <span
-                style={{
-                  background: "rgba(255, 61, 113, 0.2)",
-                  color: "#ff3d71",
-                  border: "1px solid #ff3d71",
-                  padding: "2px 6px",
-                  borderRadius: "5px",
-                  fontSize: "10px",
-                  fontWeight: 800,
-                }}
-              >
-                {selectedEvidence.criticidad}
-              </span>
-              <span style={{ fontSize: "11px", color: "#8899aa" }}>
-                {selectedEvidence.fase}
-              </span>
-            </div>
+              ◀
+            </button>
 
-            <h3
+            {/* Sleek Floating Right Navigation Arrow */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                const currentIndex = EVIDENCE_KEYS.indexOf(selectedKey);
+                const nextIndex = (currentIndex + 1) % EVIDENCE_KEYS.length;
+                handleSelect(EVIDENCE_KEYS[nextIndex]);
+              }}
               style={{
-                fontSize: "1.0rem",
-                fontWeight: 700,
-                margin: "0 0 8px",
-                color: "#ffffff",
-                lineHeight: "1.25",
+                position: "absolute",
+                right: "-52px",
+                top: "50%",
+                transform: "translateY(-50%)",
+                background: "rgba(12, 16, 28, 0.94)",
+                border: "2px solid #00e5ff",
+                color: "#00e5ff",
+                width: "38px",
+                height: "38px",
+                borderRadius: "50%",
+                cursor: "pointer",
+                fontSize: "1.1rem",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                boxShadow: "0 0 15px rgba(0, 229, 255, 0.35)",
+                transition: "all 0.2s ease",
+                pointerEvents: "auto",
               }}
-            >
-              {selectedEvidence.titulo}
-            </h3>
-
-            {/* FOTO REAL DE LA EVIDENCIA */}
-            {selectedEvidence.imagen && (
-              <div
-                style={{
-                  marginBottom: "10px",
-                  borderRadius: "8px",
-                  overflow: "hidden",
-                  border: `1px solid ${
-                    selectedEvidence.criticidad === "CRÍTICA" ? "#ff3d71" : "#00e5ff"
-                  }`,
-                  background: "#05070f",
-                  maxHeight: "135px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <img
-                  src={selectedEvidence.imagen}
-                  alt={selectedEvidence.titulo}
-                  style={{
-                    width: "100%",
-                    maxHeight: "135px",
-                    objectFit: "contain",
-                    display: "block",
-                  }}
-                />
-              </div>
-            )}
-
-            <p
-              style={{
-                fontSize: "0.80rem",
-                color: "#c5d2ec",
-                lineHeight: "1.4",
-                marginBottom: "10px",
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "#00e5ff";
+                e.currentTarget.style.color = "#0a0d1a";
               }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "rgba(12, 16, 28, 0.94)";
+                e.currentTarget.style.color = "#00e5ff";
+              }}
+              title="Siguiente Dispositivo"
             >
-              {selectedEvidence.descripcion}
-            </p>
+              ▶
+            </button>
 
+            {/* Main Modal Content Card */}
             <div
               style={{
-                background: "rgba(0, 229, 255, 0.08)",
-                borderLeft: "3px solid #00e5ff",
-                padding: "6px 10px",
-                borderRadius: "4px",
-                fontSize: "0.78rem",
-                marginBottom: "10px",
-                color: "#e2f8ff",
+                background: "rgba(12, 16, 28, 0.96)",
+                border: `2px solid ${
+                  selectedEvidence.criticidad === "CRÍTICA" ? "#ff3d71" : "#00e5ff"
+                }`,
+                boxShadow: "0 0 25px rgba(0, 229, 255, 0.35)",
+                backdropFilter: "blur(16px)",
+                borderRadius: "14px",
+                padding: "14px 18px",
+                color: "#ffffff",
+                width: "360px",
+                maxWidth: "85vw",
+                fontFamily: "Segoe UI, sans-serif",
+                pointerEvents: "auto",
+                position: "relative",
               }}
             >
-              <strong>Hallazgo In Situ:</strong> {selectedEvidence.hallazgo}
-            </div>
+              <button
+                onClick={handleClose}
+                style={{
+                  position: "absolute",
+                  top: "10px",
+                  right: "14px",
+                  background: "transparent",
+                  border: "none",
+                  color: "#99aabb",
+                  fontSize: "1.15rem",
+                  cursor: "pointer",
+                  fontWeight: "bold",
+                }}
+              >
+                ✕
+              </button>
 
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "5px" }}>
-              {selectedEvidence.herramientas.map((h) => (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  marginBottom: "6px",
+                }}
+              >
                 <span
-                  key={h}
                   style={{
-                    background: "rgba(255,255,255,0.08)",
-                    border: "1px solid rgba(255,255,255,0.15)",
-                    borderRadius: "4px",
-                    padding: "2px 6px",
-                    fontSize: "10px",
-                    color: "#a0b5d0",
+                    background: "#00e5ff",
+                    color: "#0a0d1a",
+                    padding: "3px 8px",
+                    borderRadius: "5px",
+                    fontSize: "11px",
+                    fontWeight: 900,
+                    letterSpacing: "0.06em",
                   }}
                 >
-                  🛠️ {h}
+                  {selectedEvidence.codigo}
                 </span>
-              ))}
+                <span
+                  style={{
+                    background: "rgba(255, 61, 113, 0.2)",
+                    color: "#ff3d71",
+                    border: "1px solid #ff3d71",
+                    padding: "2px 6px",
+                    borderRadius: "5px",
+                    fontSize: "10px",
+                    fontWeight: 800,
+                  }}
+                >
+                  {selectedEvidence.criticidad}
+                </span>
+                <span style={{ fontSize: "11px", color: "#8899aa" }}>
+                  {selectedEvidence.fase}
+                </span>
+              </div>
+
+              <h3
+                style={{
+                  fontSize: "1.0rem",
+                  fontWeight: 700,
+                  margin: "0 0 8px",
+                  color: "#ffffff",
+                  lineHeight: "1.25",
+                }}
+              >
+                {selectedEvidence.titulo}
+              </h3>
+
+              {/* FOTO REAL DE LA EVIDENCIA */}
+              {selectedEvidence.imagen && (
+                <div
+                  style={{
+                    marginBottom: "10px",
+                    borderRadius: "8px",
+                    overflow: "hidden",
+                    border: `1px solid ${
+                      selectedEvidence.criticidad === "CRÍTICA" ? "#ff3d71" : "#00e5ff"
+                    }`,
+                    background: "#05070f",
+                    maxHeight: "135px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <img
+                    src={selectedEvidence.imagen}
+                    alt={selectedEvidence.titulo}
+                    style={{
+                      width: "100%",
+                      maxHeight: "135px",
+                      objectFit: "contain",
+                      display: "block",
+                    }}
+                  />
+                </div>
+              )}
+
+              <p
+                style={{
+                  fontSize: "0.80rem",
+                  color: "#c5d2ec",
+                  lineHeight: "1.4",
+                  marginBottom: "10px",
+                }}
+              >
+                {selectedEvidence.descripcion}
+              </p>
+
+              <div
+                style={{
+                  background: "rgba(0, 229, 255, 0.08)",
+                  borderLeft: "3px solid #00e5ff",
+                  padding: "6px 10px",
+                  borderRadius: "4px",
+                  fontSize: "0.78rem",
+                  marginBottom: "10px",
+                  color: "#e2f8ff",
+                }}
+              >
+                <strong>Hallazgo In Situ:</strong> {selectedEvidence.hallazgo}
+              </div>
+
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginTop: "8px",
+                  paddingTop: "8px",
+                  borderTop: "1px solid rgba(255,255,255,0.08)",
+                }}
+              >
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+                  {selectedEvidence.herramientas.slice(0, 2).map((h) => (
+                    <span
+                      key={h}
+                      style={{
+                        background: "rgba(255,255,255,0.06)",
+                        border: "1px solid rgba(255,255,255,0.1)",
+                        borderRadius: "4px",
+                        padding: "2px 5px",
+                        fontSize: "9px",
+                        color: "#a0b5d0",
+                      }}
+                    >
+                      🛠️ {h}
+                    </span>
+                  ))}
+                </div>
+                <span style={{ fontSize: "10px", color: "#8899aa", fontWeight: "bold" }}>
+                  {EVIDENCE_KEYS.indexOf(selectedKey) + 1} / {EVIDENCE_KEYS.length}
+                </span>
+              </div>
             </div>
           </div>
         </Html>
       )}
     </group>
+    </>
   );
 }

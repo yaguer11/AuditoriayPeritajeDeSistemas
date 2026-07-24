@@ -166,8 +166,8 @@ function SceneContent({
       c.boundaryEnclosesCamera = true;
     } else if (isCrimeSceneActive) {
       const box = new THREE.Box3(
-        new THREE.Vector3(-6, -1, 1),
-        new THREE.Vector3(6, 6, 12),
+        new THREE.Vector3(-7, -0.5, -3.2),
+        new THREE.Vector3(7, 6, 10),
       );
       c.setBoundary(box);
       c.boundaryEnclosesCamera = true;

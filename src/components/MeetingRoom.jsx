@@ -856,12 +856,6 @@ export default function MeetingRoom({ onFocusScreen, onResetView }) {
         )}
       </group>
 
-      {/* Soporte de la pantalla */}
-      <mesh position={[0, 1.55, -3.98]}>
-        <boxGeometry args={[0.16, 1.4, 0.1]} />
-        <meshStandardMaterial color="#111318" metalness={0.6} roughness={0.4} />
-      </mesh>
-
       {/* Mesa */}
       <group position={[0, 0, 0.2]}>
         <mesh position={[0, 1.05, 0]} castShadow receiveShadow>

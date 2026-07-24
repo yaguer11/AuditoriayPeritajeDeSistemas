@@ -471,7 +471,7 @@
           ],
           "descripcion": "Evaluación de los resultados técnicos frente a los criterios de ISO 27002:2022. Se clasifican 7 No Conformidades en total, ponderadas por severidad e impacto — por ejemplo, la ausencia de MFA se clasifica como riesgo ALTO. Cada NC se vincula con su evidencia objetiva.",
           "hallazgo": "Analisis de evidencias",
-          "linkUrl": "https://tvgimenez02.atlassian.net/wiki/x/HYDpAQ",
+          "linkUrl": "https://tvgimenez02.atlassian.net/wiki/x/EQD6AQ",
           "criticidad": "ALTA",
           "imagen": "/assets/analisisevidencias.jpg"
         },

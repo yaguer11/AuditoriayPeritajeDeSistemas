@@ -130,12 +130,8 @@ function SceneContent({
     }
   }, [viewMode, DEF_Z, setActiveId]);
 
-  // Al cambiar de timeline o salir, resetear cámara
-  useEffect(() => {
-    setActiveId(null);
-    setViewMode("digital");
-    controlsRef.current?.setLookAt(0, 6, 26, 0, 0, 0, false);
-  }, [timelineId, setActiveId, setViewMode]);
+  // El reseteo al cambiar de timeline se maneja en el componente padre
+  // (TimelineScene), para no forzar "digital" en cada remontaje del lienzo.
 
   // Transición de cámara según modo de vista
   useEffect(() => {
@@ -145,6 +141,9 @@ function SceneContent({
       controlsRef.current?.setLookAt(0, 2.4, 5.2, 0, 2.2, -3.9, true);
     } else if (viewMode === "board") {
       controlsRef.current?.setLookAt(0, 1.0, DEF_Z, 0, -0.4, 0, true);
+    } else {
+      // Vista digital: reencuadrar la línea de tiempo completa al volver
+      controlsRef.current?.setLookAt(0, 6, 26, 0, 0, 0, true);
     }
   }, [viewMode, DEF_Z]);
 
@@ -362,7 +361,15 @@ function SceneContent({
 
 export default function TimelineScene({ timelineId }) {
   const [activeId, setActiveId] = useState(null);
-  const [viewMode, setViewMode] = useState("digital"); // 'digital' | 'board' | 'crimeScene'
+  const [viewMode, setViewMode] = useState("digital"); // 'digital' | 'board' | 'crimeScene' | 'meetingRoom'
+
+  // Al cambiar de línea de tiempo (Peritaje / Auditoría) volvemos siempre a la
+  // vista digital. Se maneja aquí (padre) y NO dentro del lienzo, así el
+  // remontaje del <Canvas> al cambiar de vista no fuerza la salida de la escena.
+  useEffect(() => {
+    setActiveId(null);
+    setViewMode("digital");
+  }, [timelineId]);
 
   const handleGoBack = () => {
     setActiveId(null);
@@ -371,7 +378,14 @@ export default function TimelineScene({ timelineId }) {
 
   return (
     <div style={{ position: "relative", width: "100%", height: "100%" }}>
+      {/*
+        Se fuerza el remontaje del lienzo al cambiar de vista (digital / escena /
+        tablero / sala). Cada vista arranca con un contexto WebGL y una escena
+        limpios —igual que en la carga inicial— evitando que al volver de una
+        escena 3D pesada (p. ej. FASE II) el lienzo quede vacío o corrupto.
+      */}
       <Canvas
+        key={viewMode}
         camera={{ position: [0, 6, 26], fov: 50 }}
         dpr={[1, 2]}
         onPointerMissed={() => {}}

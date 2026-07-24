@@ -82,26 +82,9 @@
           "imagen": "/assets/tap-red.png",
           "linkUrl": "https://tvgimenez02.atlassian.net/wiki/spaces/1234/pages/1179659/6.2+Inventario+de+Dispositivos+Secuestrados"
         },
+
         {
           "id": "per-05",
-          "icono": "tool",
-          "fase": "FASE IV",
-          "titulo": "Extracción física del disco NVMe EV-002",
-          "fecha": "15/07/2024",
-          "hora": "21:30 hs",
-          "responsable": "Germán Muñoz",
-          "herramientas": [
-            "Guantes antiestáticos",
-            "Kit de destornilladores ESD"
-          ],
-          "descripcion": "Se extrae físicamente el disco NVMe (EV-002) de la workstation utilizando guantes antiestáticos para evitar contaminación por descarga electrostática o pérdida de integridad del medio. El disco se rotula y fotografía antes de su adquisición.",
-          "hallazgo": "Disco NVMe EV-002 extraído sin daños",
-          "criticidad": "ALTA",
-          "imagen": "/assets/extraccion-nvme.png",
-          "linkUrl": "https://tvgimenez02.atlassian.net/wiki/spaces/1234/pages/3637249/6.2.1+Prueba+Fotografica+de+Dispositivos+Secuestrados"
-        },
-        {
-          "id": "per-06",
           "icono": "copy",
           "fase": "FASE IV",
           "titulo": "Clonación forense bit a bit (.E01)",
@@ -119,7 +102,7 @@
           "linkUrl": "https://tvgimenez02.atlassian.net/wiki/spaces/1234/pages/1507350/FASE+IV+ADQUISICI+N+DE+ALMACENAMIENTO"
         },
         {
-          "id": "per-07",
+          "id": "per-06",
           "icono": "tick",
           "fase": "FASE IV",
           "titulo": "Verificación de hashes SHA-256",
@@ -132,6 +115,24 @@
           "criticidad": "CRÍTICA",
           "imagen": "/assets/hash-sha256.png",
           "linkUrl": "https://tvgimenez02.atlassian.net/wiki/spaces/1234/pages/5242888/VALORES+HASH+DOCUMENTADOS"
+        },
+                {
+          "id": "per-07",
+          "icono": "tool",
+          "fase": "FASE IV",
+          "titulo": "Extracción física del disco NVMe EV-002",
+          "fecha": "15/07/2024",
+          "hora": "21:30 hs",
+          "responsable": "Germán Muñoz",
+          "herramientas": [
+            "Guantes antiestáticos",
+            "Kit de destornilladores ESD"
+          ],
+          "descripcion": "Se extrae físicamente el disco NVMe (EV-002) de la workstation utilizando guantes antiestáticos para evitar contaminación por descarga electrostática o pérdida de integridad del medio. El disco se rotula y fotografía antes de su adquisición.",
+          "hallazgo": "Disco NVMe EV-002 extraído sin daños",
+          "criticidad": "ALTA",
+          "imagen": "/assets/extraccion-nvme.png",
+          "linkUrl": "https://tvgimenez02.atlassian.net/wiki/spaces/1234/pages/3637249/6.2.1+Prueba+Fotografica+de+Dispositivos+Secuestrados"
         },
         {
           "id": "per-04",
@@ -182,7 +183,7 @@
           "icono": "file-text",
           "fase": "FASE VII",
           "titulo": "Dictamen final y firma digital",
-          "fecha": "26/05/2026",
+          "fecha": "14/08/2024",
           "hora": "15:20 hs",
           "responsable": "Elenio García y equipo",
           "herramientas": ["Firma digital X.509", "Informe pericial"],
@@ -197,7 +198,7 @@
           "icono": "locker",
           "fase": "FASE VII",
           "titulo": "Resguardo judicial final en UFECI",
-          "fecha": "26/05/2026",
+          "fecha": "14/08/2024",
           "hora": "17:00 hs",
           "responsable": "Valentín Giménez",
           "herramientas": ["Depósito UFECI", "Registro de cadena de custodia"],

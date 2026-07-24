@@ -80,6 +80,7 @@
           "hallazgo": "Tráfico HLS saliente capturado + router EV-005 secuestrado",
           "criticidad": "ALTA",
           "imagen": "/assets/tap-red.png",
+          "wireshark": true,
           "linkUrl": "https://tvgimenez02.atlassian.net/wiki/spaces/1234/pages/1179659/6.2+Inventario+de+Dispositivos+Secuestrados"
         },
 
@@ -238,6 +239,7 @@
           "hallazgo": "Wireshark con los requests .m3u8 y segmentos .ts hacia IPs de Cloudflare",
           "criticidad": "ALTA",
           "imagen": "/assets/tap-red.png",
+          "wireshark": true,
           "link": "https://tvgimenez02.atlassian.net/wiki/spaces/1234/pages/31916039/H-02+An+lisis+del+tr+fico+de+red+con+Wireshark"
         },
         {

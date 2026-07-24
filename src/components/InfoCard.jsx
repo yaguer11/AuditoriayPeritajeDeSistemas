@@ -124,6 +124,22 @@ export default function InfoCard({
             </div>
           )}
 
+          {evento.wireshark && (
+            <div className="info-card__link">
+              <button
+                type="button"
+                className="info-card__link-btn"
+                style={{ borderColor: "#69f0ae", background: "rgba(105, 240, 174, 0.15)" }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  window.dispatchEvent(new CustomEvent("open-wireshark"));
+                }}
+              >
+                🦈 Ver captura en vivo (Wireshark)
+              </button>
+            </div>
+          )}
+
           {evento.isCrimeSceneLauncher && onEnterCrimeScene && (
             <div className="info-card__link">
               <button

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import TimelineScene from "./components/TimelineScene.jsx";
+import WiresharkCapture from "./components/WiresharkCapture.jsx";
 import { getTimelineList } from "./hooks/useTimelineData.js";
 import "./styles.css";
 
@@ -121,6 +122,9 @@ export default function App() {
           </span>
         </div>
       </footer>
+
+      {/* Captura Wireshark en vivo (simulada) — se abre desde la ficha H-02 / FASE III */}
+      <WiresharkCapture />
     </div>
   );
 }
